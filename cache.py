@@ -12,9 +12,18 @@ import asyncio
 import enum
 import time
 from functools import wraps
-from typing import Any, Callable, Coroutine, Generic, MutableMapping, Protocol, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    Protocol,
+    TypeVar,
+)
 
 from lru import LRU
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Coroutine, MutableMapping
 
 R = TypeVar("R")
 
@@ -48,7 +57,7 @@ class ExpiringCache(dict, Generic[R]):
         # Have to do this in two steps...
         current_time = time.monotonic()
         to_remove = [
-            k for (k, (_, t)) in self.items() if current_time > (t + self.__ttl)
+            k for (k, (_, t)) in super().items() if current_time > (t + self.__ttl)
         ]
         for k in to_remove:
             del self[k]
@@ -70,6 +79,12 @@ class ExpiringCache(dict, Generic[R]):
 
     def __setitem__(self, key: str, value: R) -> None:
         super().__setitem__(key, (value, time.monotonic()))
+
+    def values(self) -> map[R]:
+        return map(lambda x: x[0], super().values())  # noqa: C417
+
+    def items(self) -> map[tuple[float, R]]:
+        return map(lambda x: (x[0], x[1][0]), super().items())  # noqa: C417
 
 
 class Strategy(enum.Enum):

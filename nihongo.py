@@ -4,7 +4,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
-from ._types.nihongo import (
+from _types.nihongo import (
     JishoWordsPayload,
     KanjiDevKanjiPayload,
     KanjiDevWordsPayload,
@@ -86,7 +86,10 @@ class KanjiDevWords:
         return self._data["variants"]
 
     def str_variants(self) -> str:
-        fmt = [f"{variant['written']} ({variant['pronounced']})" for variant in self._data["variants"]]
+        fmt = [
+            f"{variant['written']} ({variant['pronounced']})"
+            for variant in self._data["variants"]
+        ]
 
         return "\n".join(fmt)
 
