@@ -175,7 +175,11 @@ class UserFriendlyTime(commands.Converter):
             if argument.endswith("from now"):
                 argument = argument[:-8].strip()
 
-            if argument[0:2] == "me" and argument[0:6] in ("me to ", "me in ", "me at "):
+            if argument[0:2] == "me" and argument[0:6] in (
+                "me to ",
+                "me in ",
+                "me at ",
+            ):
                 # starts with "me to", "me in", or "me at "
                 argument = argument[6:]
 
@@ -325,13 +329,16 @@ def format_relative(dt: datetime.datetime) -> str:
 
 
 def resolve_next_weekday(
-    *, source: datetime.datetime | None = None, target: Weekday, exit_soon: bool = False
+    *,
+    source: datetime.datetime | None = None,
+    target: Weekday,
+    current_week_included: bool = False,
 ) -> datetime.datetime:
     source = source or datetime.datetime.now(datetime.timezone.utc)
     weekday = source.weekday()
 
     if weekday == target.value:
-        if exit_soon:
+        if current_week_included:
             return source
         return source + datetime.timedelta(days=7)
 

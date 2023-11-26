@@ -48,6 +48,4 @@ def _decode_jsonb(value: str) -> Any:
 
 
 async def db_init(connection: asyncpg.Connection) -> None:
-    await connection.set_type_codec(
-        "jsonb", schema="pg_catalog", encoder=_encode_jsonb, decoder=_decode_jsonb
-    )
+    await connection.set_type_codec("jsonb", schema="pg_catalog", encoder=_encode_jsonb, decoder=_decode_jsonb)

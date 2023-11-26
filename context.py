@@ -72,29 +72,19 @@ class ConnectionContextManager(Protocol):
 
 
 class DatabaseProtocol(Protocol):
-    async def execute(
-        self, query: str, *args: Any, timeout: float | None = None
-    ) -> str:
+    async def execute(self, query: str, *args: Any, timeout: float | None = None) -> str:
         ...
 
-    async def fetch(
-        self, query: str, *args: Any, timeout: float | None = None
-    ) -> list[Any]:
+    async def fetch(self, query: str, *args: Any, timeout: float | None = None) -> list[Any]:
         ...
 
-    async def fetchrow(
-        self, query: str, *args: Any, timeout: float | None = None
-    ) -> Any | None:
+    async def fetchrow(self, query: str, *args: Any, timeout: float | None = None) -> Any | None:
         ...
 
-    async def fetchval(
-        self, query: str, *args: Any, timeout: float | None = None
-    ) -> Any | None:
+    async def fetchval(self, query: str, *args: Any, timeout: float | None = None) -> Any | None:
         ...
 
-    async def executemany(
-        self, query: str, args: Iterable[Sequence[Any]], *, timeout: float | None = None
-    ) -> None:
+    async def executemany(self, query: str, args: Iterable[Sequence[Any]], *, timeout: float | None = None) -> None:
         ...
 
     async def close(self) -> None:
@@ -132,9 +122,7 @@ class DisambiguatorView(MiphaBaseView, Generic[T]):
 
     async def interaction_check(self, interaction: Interaction) -> bool:
         if interaction.user.id != self.ctx.author.id:
-            await interaction.response.send_message(
-                "This select menu is not meant for you, sorry.", ephemeral=True
-            )
+            await interaction.response.send_message("This select menu is not meant for you, sorry.", ephemeral=True)
             return False
         return True
 
@@ -188,9 +176,7 @@ class Context(commands.Context["Mipha"], Generic[CogT]):
         if ref and isinstance(ref.resolved, discord.Message):
             return ref.resolved
 
-    async def disambiguate(
-        self, matches: list[T], entry: Callable[[T], Any], *, ephemeral: bool = False
-    ) -> T:
+    async def disambiguate(self, matches: list[T], entry: Callable[[T], Any], *, ephemeral: bool = False) -> T:
         if len(matches) == 0:
             raise ValueError("No results found.")
 
@@ -273,10 +259,7 @@ class Context(commands.Context["Mipha"], Generic[CogT]):
         delete_after: float | None = ...,
         nonce: str | int | None = ...,
         allowed_mentions: discord.AllowedMentions | None = ...,
-        reference: discord.Message
-        | discord.MessageReference
-        | discord.PartialMessage
-        | None = ...,
+        reference: discord.Message | discord.MessageReference | discord.PartialMessage | None = ...,
         mention_author: bool | None = ...,
         view: discord.ui.View | None = ...,
         suppress_embeds: bool = ...,
@@ -302,10 +285,7 @@ class Context(commands.Context["Mipha"], Generic[CogT]):
         delete_after: float | None = ...,
         nonce: str | int | None = ...,
         allowed_mentions: discord.AllowedMentions | None = ...,
-        reference: discord.Message
-        | discord.MessageReference
-        | discord.PartialMessage
-        | None = ...,
+        reference: discord.Message | discord.MessageReference | discord.PartialMessage | None = ...,
         mention_author: bool | None = ...,
         view: discord.ui.View | None = ...,
         suppress_embeds: bool = ...,
@@ -331,10 +311,7 @@ class Context(commands.Context["Mipha"], Generic[CogT]):
         delete_after: float | None = ...,
         nonce: str | int | None = ...,
         allowed_mentions: discord.AllowedMentions | None = ...,
-        reference: discord.Message
-        | discord.MessageReference
-        | discord.PartialMessage
-        | None = ...,
+        reference: discord.Message | discord.MessageReference | discord.PartialMessage | None = ...,
         mention_author: bool | None = ...,
         view: discord.ui.View | None = ...,
         suppress_embeds: bool = ...,
@@ -359,10 +336,7 @@ class Context(commands.Context["Mipha"], Generic[CogT]):
         delete_after: float | None = None,
         nonce: str | int | None = None,
         allowed_mentions: discord.AllowedMentions | None = None,
-        reference: discord.Message
-        | discord.MessageReference
-        | discord.PartialMessage
-        | None = None,
+        reference: discord.Message | discord.MessageReference | discord.PartialMessage | None = None,
         mention_author: bool | None = None,
         view: discord.ui.View | None = None,
         suppress_embeds: bool = False,
@@ -379,10 +353,7 @@ class Context(commands.Context["Mipha"], Generic[CogT]):
                 filename=f"output.{mystbin_syntax}",
                 content=content,
                 password=password,
-                expires=(
-                    datetime.datetime.now(datetime.timezone.utc)
-                    + datetime.timedelta(hours=2)
-                ),
+                expires=(datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=2)),
             )
             assert paste.expires
             content = (

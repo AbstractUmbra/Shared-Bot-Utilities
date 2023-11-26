@@ -86,10 +86,7 @@ class KanjiDevWords:
         return self._data["variants"]
 
     def str_variants(self) -> str:
-        fmt = [
-            f"{variant['written']} ({variant['pronounced']})"
-            for variant in self._data["variants"]
-        ]
+        fmt = [f"{variant['written']} ({variant['pronounced']})" for variant in self._data["variants"]]
 
         return "\n".join(fmt)
 

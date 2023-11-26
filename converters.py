@@ -20,9 +20,7 @@ from typing_extensions import NotRequired, Self
 from utilities.context import Context, GuildContext, Interaction
 from utilities.time import hf_time
 
-MYSTBIN_REGEX = re.compile(
-    r"(?:(?:https?://)?(?:beta\.)?(?:mystb\.in\/))?(?P<id>(?:[A-Z]{1}[a-z]+)*)(?P<ext>\.\w+)?"
-)
+MYSTBIN_REGEX = re.compile(r"(?:(?:https?://)?(?:beta\.)?(?:mystb\.in\/))?(?P<id>(?:[A-Z]{1}[a-z]+)*)(?P<ext>\.\w+)?")
 LOGGER = logging.getLogger(__name__)
 
 __all__ = (
@@ -95,9 +93,7 @@ class RedditMediaURL:
         if url.host is None:
             raise commands.BadArgument("Not a valid v.reddit url.")
 
-        is_valid_path = url.host.endswith(".reddit.com") and cls.VALID_PATH.match(
-            url.path
-        )
+        is_valid_path = url.host.endswith(".reddit.com") and cls.VALID_PATH.match(url.path)
         if not is_valid_path:
             raise commands.BadArgument("Not a reddit URL.")
 
@@ -133,9 +129,7 @@ class RedditMediaURL:
 class DatetimeConverter(commands.Converter[datetime.datetime]):
     @staticmethod
     async def get_timezone(ctx: Context) -> zoneinfo.ZoneInfo | None:
-        row: str | None = await ctx.bot.pool.fetchval(
-            "SELECT tz FROM tz_store WHERE user_id = $1;", ctx.author.id
-        )
+        row: str | None = await ctx.bot.pool.fetchval("SELECT tz FROM tz_store WHERE user_id = $1;", ctx.author.id)
         tz = zoneinfo.ZoneInfo(row) if row else zoneinfo.ZoneInfo("UTC")
 
         return tz
@@ -179,9 +173,7 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
                     times.append(
                         (
                             datetime.datetime.now(datetime.timezone.utc)
-                            + datetime.timedelta(
-                                seconds=time["value"]["normalized"]["value"]
-                            ),
+                            + datetime.timedelta(seconds=time["value"]["normalized"]["value"]),
                             time["start"],
                             time["end"],
                         )
@@ -205,9 +197,7 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
             path="/parse",
         )
 
-        parsed_times = await cls.parse(
-            argument, ctx=ctx, timezone=timezone, now=now, duckling_url=duckling_url
-        )
+        parsed_times = await cls.parse(argument, ctx=ctx, timezone=timezone, now=now, duckling_url=duckling_url)
 
         if len(parsed_times) == 0:
             raise commands.BadArgument("Could not parse time.")
@@ -219,9 +209,7 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
 
 class WhenAndWhatConverter(commands.Converter[tuple[datetime.datetime, str]]):
     @classmethod
-    async def convert(
-        cls, ctx: Context, argument: str
-    ) -> tuple[datetime.datetime, str]:
+    async def convert(cls, ctx: Context, argument: str) -> tuple[datetime.datetime, str]:
         timezone = await DatetimeConverter.get_timezone(ctx)
         now = ctx.message.created_at.astimezone(tz=timezone)
 
@@ -266,11 +254,7 @@ class WhenAndWhatConverter(commands.Converter[tuple[datetime.datetime, str]]):
         if when < now:
             raise commands.BadArgument("This time is in the past.")
 
-        what = (
-            argument[end + 1 :].lstrip(" ,.!:;")
-            if begin == 0
-            else argument[:begin].strip()
-        )
+        what = argument[end + 1 :].lstrip(" ,.!:;") if begin == 0 else argument[:begin].strip()
 
         for prefix in ("to ",):
             if what.startswith(prefix):
@@ -323,9 +307,7 @@ class DatetimeTransformer(app_commands.Transformer):
                 if time["dim"] == "time" and "value" in time["value"]:
                     times.append(
                         (
-                            datetime.datetime.fromisoformat(
-                                time["value"]["value"]
-                            ).astimezone(timezone),
+                            datetime.datetime.fromisoformat(time["value"]["value"]).astimezone(timezone),
                             time["start"],
                             time["end"],
                         )
@@ -334,9 +316,7 @@ class DatetimeTransformer(app_commands.Transformer):
                     times.append(
                         (
                             datetime.datetime.now(timezone)
-                            + datetime.timedelta(
-                                seconds=time["value"]["normalized"]["value"]
-                            ),
+                            + datetime.timedelta(seconds=time["value"]["normalized"]["value"]),
                             time["start"],
                             time["end"],
                         )
@@ -345,9 +325,7 @@ class DatetimeTransformer(app_commands.Transformer):
         return times
 
     @classmethod
-    async def transform(
-        cls, interaction: Interaction, argument: str
-    ) -> datetime.datetime:
+    async def transform(cls, interaction: Interaction, argument: str) -> datetime.datetime:
         timezone = await cls.get_timezone(interaction)
         now = interaction.created_at.astimezone(tz=timezone)
 
@@ -377,9 +355,7 @@ class DatetimeTransformer(app_commands.Transformer):
 
         return parsed_times[0][0]
 
-    async def autocomplete(
-        self, interaction: Interaction, value: str
-    ) -> list[app_commands.Choice[str]]:
+    async def autocomplete(self, interaction: Interaction, value: str) -> list[app_commands.Choice[str]]:
         if not value:
             return []
 
@@ -411,10 +387,7 @@ class DatetimeTransformer(app_commands.Transformer):
         )
 
         return [
-            app_commands.Choice(
-                name=hf_time(when, with_time=True), value=when.isoformat()
-            )
-            for when, _, _ in parsed_times
+            app_commands.Choice(name=hf_time(when, with_time=True), value=when.isoformat()) for when, _, _ in parsed_times
         ]
 
 
@@ -468,9 +441,7 @@ class WhenAndWhatTransformer(DatetimeTransformer):
         if when < now:
             raise BadDatetimeTransform("This time is in the past.")
 
-        what = (
-            value[end + 1 :].lstrip(" ,.!:;") if begin == 0 else value[:begin].strip()
-        )
+        what = value[end + 1 :].lstrip(" ,.!:;") if begin == 0 else value[:begin].strip()
 
         for prefix in ("to ",):
             if what.startswith(prefix):
@@ -478,9 +449,7 @@ class WhenAndWhatTransformer(DatetimeTransformer):
 
         return when
 
-    async def autocomplete(
-        self, interaction: Interaction, value: str
-    ) -> list[app_commands.Choice[str]]:
+    async def autocomplete(self, interaction: Interaction, value: str) -> list[app_commands.Choice[str]]:
         raise NotImplementedError("Not meant for this subclass.")
 
 
@@ -494,9 +463,7 @@ class Snowflake:
         except ValueError:
             param = ctx.current_parameter
             if param:
-                raise commands.BadArgument(
-                    f"{param.name} argument expected a Discord ID not {argument!r}"
-                )
+                raise commands.BadArgument(f"{param.name} argument expected a Discord ID not {argument!r}")
             raise commands.BadArgument(f"expected a Discord ID not {argument!r}")
 
 
@@ -504,8 +471,6 @@ class MystbinPasteConverter(commands.Converter[str]):
     async def convert(self, ctx: GuildContext, argument: str) -> str:
         matches = MYSTBIN_REGEX.search(argument)
         if not matches:
-            raise commands.ConversionError(
-                self, ValueError("No Mystbin IDs found in this text.")
-            )
+            raise commands.ConversionError(self, ValueError("No Mystbin IDs found in this text."))
 
         return matches["id"]

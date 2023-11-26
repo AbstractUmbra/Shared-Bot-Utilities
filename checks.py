@@ -35,14 +35,10 @@ async def check_permissions(
         return True
 
     resolved = ctx.channel.permissions_for(ctx.author)
-    return check(
-        getattr(resolved, name, None) == value for name, value in perms.items()
-    )
+    return check(getattr(resolved, name, None) == value for name, value in perms.items())
 
 
-def has_permissions(
-    *, check: Callable[[Iterable[Any]], bool] = all, **perms: bool
-) -> Callable[[T], T]:
+def has_permissions(*, check: Callable[[Iterable[Any]], bool] = all, **perms: bool) -> Callable[[T], T]:
     async def pred(ctx: GuildContext) -> bool:
         return await check_permissions(ctx, perms, check=check)
 
@@ -63,14 +59,10 @@ async def check_guild_permissions(
         return False
 
     resolved = ctx.author.guild_permissions
-    return check(
-        getattr(resolved, name, None) == value for name, value in perms.items()
-    )
+    return check(getattr(resolved, name, None) == value for name, value in perms.items())
 
 
-def has_guild_permissions(
-    *, check: Callable[[Iterable[Any]], bool] = all, **perms: bool
-) -> Callable[[T], T]:
+def has_guild_permissions(*, check: Callable[[Iterable[Any]], bool] = all, **perms: bool) -> Callable[[T], T]:
     async def pred(ctx: GuildContext) -> bool:
         return await check_guild_permissions(ctx, perms, check=check)
 
@@ -135,11 +127,7 @@ def can_use_spoiler() -> Callable[[T], T]:
             raise commands.BadArgument("Cannot be used in private messages.")
 
         my_permissions = ctx.channel.permissions_for(ctx.guild.me)
-        if not (
-            my_permissions.read_message_history
-            and my_permissions.manage_messages
-            and my_permissions.add_reactions
-        ):
+        if not (my_permissions.read_message_history and my_permissions.manage_messages and my_permissions.add_reactions):
             raise commands.BadArgument(
                 "Need Read Message History, Add Reactions and Manage Messages "
                 "to permission to use this. Sorry if I spoiled you."
