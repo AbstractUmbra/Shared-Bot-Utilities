@@ -167,7 +167,7 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
                             datetime.datetime.fromisoformat(time["value"]["value"]),
                             time["start"],
                             time["end"],
-                        )
+                        ),
                     )
                 elif time["dim"] == "duration":
                     times.append(
@@ -176,7 +176,7 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
                             + datetime.timedelta(seconds=time["value"]["normalized"]["value"]),
                             time["start"],
                             time["end"],
-                        )
+                        ),
                     )
 
         return times
@@ -238,7 +238,11 @@ class WhenAndWhatConverter(commands.Converter[tuple[datetime.datetime, str]]):
 
         # Determine the date argument
         parsed_times = await DatetimeConverter.parse(
-            argument, ctx=ctx, timezone=timezone, now=now, duckling_url=duckling_url
+            argument,
+            ctx=ctx,
+            timezone=timezone,
+            now=now,
+            duckling_url=duckling_url,
         )
 
         if len(parsed_times) == 0:
@@ -271,7 +275,8 @@ class DatetimeTransformer(app_commands.Transformer):
     @staticmethod
     async def get_timezone(interaction: Interaction) -> zoneinfo.ZoneInfo | None:
         row: str | None = await interaction.client.pool.fetchval(
-            "SELECT tz FROM tz_store WHERE user_id = $1;", interaction.user.id
+            "SELECT tz FROM tz_store WHERE user_id = $1;",
+            interaction.user.id,
         )
         tz = zoneinfo.ZoneInfo(row) if row else zoneinfo.ZoneInfo("UTC")
 
@@ -310,7 +315,7 @@ class DatetimeTransformer(app_commands.Transformer):
                             datetime.datetime.fromisoformat(time["value"]["value"]).astimezone(timezone),
                             time["start"],
                             time["end"],
-                        )
+                        ),
                     )
                 elif time["dim"] == "duration":
                     times.append(
@@ -319,7 +324,7 @@ class DatetimeTransformer(app_commands.Transformer):
                             + datetime.timedelta(seconds=time["value"]["normalized"]["value"]),
                             time["start"],
                             time["end"],
-                        )
+                        ),
                     )
 
         return times

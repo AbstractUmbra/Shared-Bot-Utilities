@@ -130,7 +130,7 @@ def can_use_spoiler() -> Callable[[T], T]:
         if not (my_permissions.read_message_history and my_permissions.manage_messages and my_permissions.add_reactions):
             raise commands.BadArgument(
                 "Need Read Message History, Add Reactions and Manage Messages "
-                "to permission to use this. Sorry if I spoiled you."
+                "to permission to use this. Sorry if I spoiled you.",
             )
         return True
 

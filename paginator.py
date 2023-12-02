@@ -348,7 +348,9 @@ class MangaDexEmbed(discord.Embed):
         self.add_field(name="Number of pages:", value=chapter.pages, inline=False)
         if chapter.scanlator_groups:
             self.add_field(
-                name="Scanlator groups:", value="\n".join([s.name for s in chapter.scanlator_groups]), inline=False
+                name="Scanlator groups:",
+                value="\n".join([s.name for s in chapter.scanlator_groups]),
+                inline=False,
             )
         if chapter.uploader:
             self.add_field(name="Uploader:", value=chapter.uploader.username, inline=False)

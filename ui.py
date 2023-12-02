@@ -24,7 +24,11 @@ __all__ = ("MiphaBaseView", "ConfirmationView")
 
 
 class MiphaBaseModal(discord.ui.Modal):
-    async def on_error(self, interaction: Interaction, error: app_commands.AppCommandError) -> None:
+    async def on_error(
+        self,
+        interaction: Interaction,
+        error: app_commands.AppCommandError,
+    ) -> None:
         e = discord.Embed(title="IRLs Modal Error", colour=0xA32952)
         e.add_field(name="Modal", value=self.__class__.__name__, inline=False)
 
@@ -44,9 +48,19 @@ class MiphaBaseModal(discord.ui.Modal):
 class MiphaBaseView(discord.ui.View):
     message: discord.Message | discord.PartialMessage
 
-    async def on_error(self, interaction: Interaction, error: Exception, item: discord.ui.Item[Self], /) -> None:
+    async def on_error(
+        self,
+        interaction: Interaction,
+        error: Exception,
+        item: discord.ui.Item[Self],
+        /,
+    ) -> None:
         view_name = self.__class__.__name__
-        interaction.client.log_handler.log.exception("Exception occurred in View %r:\n%s", view_name, error)
+        interaction.client.log_handler.log.exception(
+            "Exception occurred in View %r:\n%s",
+            view_name,
+            error,
+        )
 
         embed = discord.Embed(title=f"{view_name} View Error", colour=0xA32952)
         embed.add_field(name="Author", value=interaction.user, inline=False)
@@ -63,7 +77,11 @@ class MiphaBaseView(discord.ui.View):
         clean = "".join(trace)
         if len(clean) >= 2000:
             password = secrets.token_urlsafe(16)
-            paste = await interaction.client.mb_client.create_paste(filename="error.py", content=clean, password=password)
+            paste = await interaction.client.mb_client.create_paste(
+                filename="error.py",
+                content=clean,
+                password=password,
+            )
             embed.description = (
                 f"Error was too long to send in a codeblock, so I have pasted it [here]({paste.url})."
                 f"\nThe password is `{password}`."
@@ -96,19 +114,28 @@ class ConfirmationView(MiphaBaseView):
     async def interaction_check(self, interaction: Interaction) -> bool:
         if interaction.user and interaction.user.id == self.author_id:
             return True
-        else:
-            await interaction.response.send_message("This confirmation dialog is not for you.", ephemeral=True)
-            return False
+        await interaction.response.send_message(
+            "This confirmation dialog is not for you.",
+            ephemeral=True,
+        )
+        return False
 
     async def on_timeout(self) -> None:
         if self.delete_after and self.message:
             if not self.message.flags.ephemeral:
                 await self.message.delete()
             else:
-                await self.message.edit(view=None, content="This is safe to dismiss now.")
+                await self.message.edit(
+                    view=None,
+                    content="This is safe to dismiss now.",
+                )
 
     @discord.ui.button(label="Confirm", style=discord.ButtonStyle.green)
-    async def confirm(self, interaction: Interaction, button: discord.ui.Button) -> None:
+    async def confirm(
+        self,
+        interaction: Interaction,
+        button: discord.ui.Button,
+    ) -> None:
         self.value = True
         await interaction.response.defer()
         if self.delete_after and self.message:

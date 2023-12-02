@@ -20,7 +20,7 @@ import discord
 from discord.utils import escape_markdown
 
 CONTROL_CHARS = re.compile(
-    "[%s]" % re.escape("".join(chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("C")))
+    "[%s]" % re.escape("".join(chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("C"))),
 )
 
 
@@ -135,7 +135,7 @@ def to_codeblock(
 
 def escape_invis(decode_error: UnicodeDecodeError | UnicodeEncodeError) -> tuple[str | bytes, int] | None:
     if isinstance(decode_error, UnicodeDecodeError):
-        return
+        return None
 
     decode_error.end = decode_error.start + 1
     if CONTROL_CHARS.match(decode_error.object[decode_error.start : decode_error.end]):

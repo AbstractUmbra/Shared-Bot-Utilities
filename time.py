@@ -77,7 +77,9 @@ class HumanTime:
         dt, status = self.calendar.parseDT(argument, sourceTime=now)
         assert isinstance(status, pdt.pdtContext)
         if not status.hasDateOrTime:
-            raise commands.BadArgument('invalid time provided, try e.g. "tomorrow" or "3 days"')
+            raise commands.BadArgument(
+                'invalid time provided, try e.g. "tomorrow" or "3 days"',
+            )
 
         if not status.hasTime:
             # replace it with the current time
@@ -121,7 +123,12 @@ class UserFriendlyTime(commands.Converter):
 
     dt: datetime.datetime
 
-    def __init__(self, converter: commands.Converter | None = None, *, default: str | None = None) -> None:
+    def __init__(
+        self,
+        converter: commands.Converter | None = None,
+        *,
+        default: str | None = None,
+    ) -> None:
         if isinstance(converter, type) and issubclass(converter, commands.Converter):
             converter = converter()
 
@@ -131,7 +138,12 @@ class UserFriendlyTime(commands.Converter):
         self.converter = converter
         self.default = default
 
-    async def check_constraints(self, ctx: Context, now: datetime.datetime, remaining: str) -> UserFriendlyTime:
+    async def check_constraints(
+        self,
+        ctx: Context,
+        now: datetime.datetime,
+        remaining: str,
+    ) -> UserFriendlyTime:
         if self.dt < now:
             raise commands.BadArgument("This time is in the past.")
 
@@ -185,7 +197,9 @@ class UserFriendlyTime(commands.Converter):
 
             elements = calendar.nlp(argument, sourceTime=now)
             if elements is None or len(elements) == 0:
-                raise commands.BadArgument('Invalid time provided, try e.g. "tomorrow" or "3 days".')
+                raise commands.BadArgument(
+                    'Invalid time provided, try e.g. "tomorrow" or "3 days".',
+                )
 
             # handle the following cases:
             # "date time" foo
@@ -196,13 +210,15 @@ class UserFriendlyTime(commands.Converter):
             dt, status, begin, end, _ = elements[0]
 
             if not status.hasDateOrTime:
-                raise commands.BadArgument('Invalid time provided, try e.g. "tomorrow" or "3 days".')
+                raise commands.BadArgument(
+                    'Invalid time provided, try e.g. "tomorrow" or "3 days".',
+                )
 
             if begin not in (0, 1) and end != len(argument):
                 raise commands.BadArgument(
                     "Time is either in an inappropriate location, which "
                     "must be either at the end or beginning of your input, "
-                    "or I just flat out did not understand what you meant. Sorry."
+                    "or I just flat out did not understand what you meant. Sorry.",
                 )
 
             if not status.hasTime:
@@ -224,10 +240,14 @@ class UserFriendlyTime(commands.Converter):
                 if begin == 1:
                     # check if it's quoted:
                     if argument[0] != '"':
-                        raise commands.BadArgument("Expected quote before time input...")
+                        raise commands.BadArgument(
+                            "Expected quote before time input...",
+                        )
 
                     if not (end < len(argument) and argument[end] == '"'):
-                        raise commands.BadArgument("If the time is quoted, you must unquote it.")
+                        raise commands.BadArgument(
+                            "If the time is quoted, you must unquote it.",
+                        )
 
                     remaining = argument[end + 1 :].lstrip(" ,.!")
                 else:
@@ -305,19 +325,16 @@ def human_timedelta(
 
     if len(output) == 0:
         return "now"
-    else:
-        if not brief:
-            return human_join(output, final="and") + str_suffix
-        else:
-            return " ".join(output) + str_suffix
+    if not brief:
+        return human_join(output, final="and") + str_suffix
+    return " ".join(output) + str_suffix
 
 
 def hf_time(dt: datetime.datetime, *, with_time: bool = True) -> str:
     date_modif = ordinal(dt.day)
     if with_time:
         return dt.strftime(f"%A {date_modif} of %B %Y @ %H:%M %Z (%z)")
-    else:
-        return dt.strftime(f"%A {date_modif} of %B %Y")
+    return dt.strftime(f"%A {date_modif} of %B %Y")
 
 
 def ordinal(number: int) -> str:
