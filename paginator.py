@@ -14,7 +14,6 @@ from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
 import discord
 from discord.ext import menus
 from discord.ext.commands import Paginator as CommandPaginator
-from typing_extensions import Self
 
 from .ui import BaseView
 
@@ -28,6 +27,8 @@ else:
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from typing_extensions import Self
+
     from utilities.context import Context, Interaction
 
 T = TypeVar("T")
@@ -37,7 +38,7 @@ SimplePagesT = TypeVar("SimplePagesT", bound="SimplePages")
 
 
 class NumberedPageModal(discord.ui.Modal, title="Go to page"):
-    page = discord.ui.TextInput[Self](label="Page", placeholder="Enter a number", min_length=1)
+    page = discord.ui.TextInput["Self"](label="Page", placeholder="Enter a number", min_length=1)
 
     def __init__(self, max_pages: int | None) -> None:
         super().__init__()

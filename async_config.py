@@ -11,17 +11,20 @@ from __future__ import annotations
 import asyncio
 import json
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Generic, TypeAlias, overload
-
-from typing_extensions import TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar, overload
 
 if TYPE_CHECKING:
     import pathlib
 
+    from typing_extensions import TypeVar  # noqa: TCH004, F811
+
+    _T = TypeVar("_T", default=Any)
+else:
+    _T = TypeVar("_T")
+_defT = TypeVar("_defT")
+
 
 ObjectHook: TypeAlias = Callable[[dict[str, Any]], Any]
-_T = TypeVar("_T", default=Any)
-_defT = TypeVar("_defT")
 
 
 class Config(Generic[_T]):
