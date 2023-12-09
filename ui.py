@@ -20,10 +20,10 @@ if TYPE_CHECKING:
     from extensions.stats import Stats
     from utilities.context import Interaction
 
-__all__ = ("MiphaBaseView", "ConfirmationView")
+__all__ = ("BaseModal", "BaseView", "ConfirmationView")
 
 
-class MiphaBaseModal(discord.ui.Modal):
+class BaseModal(discord.ui.Modal):
     async def on_error(
         self,
         interaction: Interaction,
@@ -45,7 +45,7 @@ class MiphaBaseModal(discord.ui.Modal):
             pass
 
 
-class MiphaBaseView(discord.ui.View):
+class BaseView(discord.ui.View):
     message: discord.Message | discord.PartialMessage
 
     async def on_error(
@@ -103,7 +103,7 @@ class MiphaBaseView(discord.ui.View):
         await self.message.edit(view=self)
 
 
-class ConfirmationView(MiphaBaseView):
+class ConfirmationView(BaseView):
     def __init__(self, *, timeout: float, author_id: int, delete_after: bool) -> None:
         super().__init__(timeout=timeout)
         self.value: bool | None = None

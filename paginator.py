@@ -12,12 +12,18 @@ from textwrap import shorten
 from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
 
 import discord
-import hondana
 from discord.ext import menus
 from discord.ext.commands import Paginator as CommandPaginator
 from typing_extensions import Self
 
-from utilities.ui import MiphaBaseView
+from .ui import BaseView
+
+try:
+    import hondana  # type: ignore[reportMissingImports]  # may not always exist
+except ModuleNotFoundError:
+    HAS_HONDANA = False
+else:
+    HAS_HONDANA = True
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -45,7 +51,7 @@ class NumberedPageModal(discord.ui.Modal, title="Go to page"):
         self.stop()
 
 
-class RoboPages(MiphaBaseView):
+class RoboPages(BaseView):
     def __init__(
         self,
         source: menus.PageSource,
@@ -326,65 +332,67 @@ class SimpleListSource(menus.ListPageSource, Generic[T]):
         return entries
 
 
-class MangaDexEmbed(discord.Embed):
-    @classmethod
-    async def from_chapter(cls: type[Self], chapter: hondana.Chapter, *, nsfw_allowed: bool = False) -> Self:
-        parent = chapter.manga
-        assert parent is not None
+if HAS_HONDANA:
 
-        parent_title = parent.title
-        if chapter.title:
-            parent_title += f" - {chapter.title}"
-        if chapter.chapter:
-            parent_title += f" [Chapter {chapter.chapter}]"
+    class MangaDexEmbed(discord.Embed):
+        @classmethod
+        async def from_chapter(cls: type[Self], chapter: hondana.Chapter, *, nsfw_allowed: bool = False) -> Self:
+            parent = chapter.manga
+            assert parent is not None
 
-        if parent.cover_url() is None:
-            await parent.get_cover()
+            parent_title = parent.title
+            if chapter.title:
+                parent_title += f" - {chapter.title}"
+            if chapter.chapter:
+                parent_title += f" [Chapter {chapter.chapter}]"
 
-        self = cls(title=parent_title, colour=discord.Colour.red(), url=chapter.url)
-        self.set_footer(text=chapter.id)
-        self.timestamp = chapter.created_at
-        self.add_field(name="Manga link is:", value=f"[here!]({parent.url})", inline=False)
-        self.add_field(name="Number of pages:", value=chapter.pages, inline=False)
-        if chapter.scanlator_groups:
-            self.add_field(
-                name="Scanlator groups:",
-                value="\n".join([s.name for s in chapter.scanlator_groups]),
-                inline=False,
-            )
-        if chapter.uploader:
-            self.add_field(name="Uploader:", value=chapter.uploader.username, inline=False)
+            if parent.cover_url() is None:
+                await parent.get_cover()
 
-        if parent.content_rating is hondana.ContentRating.safe or (nsfw_allowed is True):
-            self.set_thumbnail(url=parent.cover_url())
+            self = cls(title=parent_title, colour=discord.Colour.red(), url=chapter.url)
+            self.set_footer(text=chapter.id)
+            self.timestamp = chapter.created_at
+            self.add_field(name="Manga link is:", value=f"[here!]({parent.url})", inline=False)
+            self.add_field(name="Number of pages:", value=chapter.pages, inline=False)
+            if chapter.scanlator_groups:
+                self.add_field(
+                    name="Scanlator groups:",
+                    value="\n".join([s.name for s in chapter.scanlator_groups]),
+                    inline=False,
+                )
+            if chapter.uploader:
+                self.add_field(name="Uploader:", value=chapter.uploader.username, inline=False)
 
-        return self
+            if parent.content_rating is hondana.ContentRating.safe or (nsfw_allowed is True):
+                self.set_thumbnail(url=parent.cover_url())
 
-    @classmethod
-    async def from_manga(cls: type[Self], manga: hondana.Manga, *, nsfw_allowed: bool = False) -> Self:
-        self = cls(title=manga.title, colour=discord.Colour.blue(), url=manga.url)
-        if manga.description:
-            self.description = shorten(manga.description, width=2000)
-        if manga.tags:
-            self.add_field(name="Tags:", value=", ".join([tag.name for tag in manga.tags]), inline=False)
-        if manga.publication_demographic:
-            self.add_field(name="Publication Demographic:", value=str(manga.publication_demographic).title())
-        if manga.content_rating:
-            self.add_field(name="Content Rating:", value=str(manga.content_rating).title(), inline=False)
-        if manga.artists:
-            self.add_field(name="Attributed Artists:", value=", ".join([artist.name for artist in manga.artists]))
-        if manga.authors:
-            self.add_field(name="Attributed Authors:", value=", ".join([artist.name for artist in manga.authors]))
-        if manga.status:
-            self.add_field(name="Publication status:", value=str(manga.status).title(), inline=False)
-            if manga.status is hondana.MangaStatus.completed:
-                self.add_field(name="Last Volume:", value=manga.last_volume)
-                self.add_field(name="Last Chapter:", value=manga.last_chapter)
-        self.set_footer(text=manga.id)
+            return self
 
-        if manga.content_rating is hondana.ContentRating.safe or (nsfw_allowed is True):
-            cover = manga.cover_url() or await manga.get_cover()
-            if cover:
-                self.set_image(url=manga.cover_url())
+        @classmethod
+        async def from_manga(cls: type[Self], manga: hondana.Manga, *, nsfw_allowed: bool = False) -> Self:
+            self = cls(title=manga.title, colour=discord.Colour.blue(), url=manga.url)
+            if manga.description:
+                self.description = shorten(manga.description, width=2000)
+            if manga.tags:
+                self.add_field(name="Tags:", value=", ".join([tag.name for tag in manga.tags]), inline=False)
+            if manga.publication_demographic:
+                self.add_field(name="Publication Demographic:", value=str(manga.publication_demographic).title())
+            if manga.content_rating:
+                self.add_field(name="Content Rating:", value=str(manga.content_rating).title(), inline=False)
+            if manga.artists:
+                self.add_field(name="Attributed Artists:", value=", ".join([artist.name for artist in manga.artists]))
+            if manga.authors:
+                self.add_field(name="Attributed Authors:", value=", ".join([artist.name for artist in manga.authors]))
+            if manga.status:
+                self.add_field(name="Publication status:", value=str(manga.status).title(), inline=False)
+                if manga.status is hondana.MangaStatus.completed:
+                    self.add_field(name="Last Volume:", value=manga.last_volume)
+                    self.add_field(name="Last Chapter:", value=manga.last_chapter)
+            self.set_footer(text=manga.id)
 
-        return self
+            if manga.content_rating is hondana.ContentRating.safe or (nsfw_allowed is True):
+                cover = manga.cover_url() or await manga.get_cover()
+                if cover:
+                    self.set_image(url=manga.cover_url())
+
+            return self

@@ -212,8 +212,23 @@ def clean_triple_backtick(line: str) -> str:
     return clean_emojis(line)
 
 
-def to_json(obj: Any) -> str:
-    return json.dumps(obj, separators=(",", ":"), ensure_ascii=True)
+try:
+    import orjson
+except ImportError:
+
+    def to_json(obj: Any) -> str:
+        return json.dumps(obj, separators=(",", "."), ensure_ascii=True)
+
+    def from_json(obj: str) -> Any:
+        return json.loads(obj)
+
+else:
+
+    def to_json(obj: Any) -> str:
+        return orjson.dumps(obj).decode()
+
+    def from_json(obj: str) -> Any:
+        return orjson.loads(obj)
 
 
 def random_pastel_colour() -> discord.Colour:

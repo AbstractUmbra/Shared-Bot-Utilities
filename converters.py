@@ -5,20 +5,24 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 This file was sourced from [RoboDanny](https://github.com/Rapptz/RoboDanny).
 """
+from __future__ import annotations
 
 import datetime
 import logging
 import re
-from typing import Any, Literal, Sequence, Type, TypedDict
+from typing import TYPE_CHECKING, Any, Literal, Sequence, TypedDict
 
 import yarl
 import zoneinfo
 from discord import app_commands
 from discord.ext import commands
-from typing_extensions import NotRequired, Self
 
-from utilities.context import Context, GuildContext, Interaction
-from utilities.time import hf_time
+from .time import hf_time
+
+if TYPE_CHECKING:
+    from typing_extensions import NotRequired, Self
+
+    from ..context import Context, GuildContext, Interaction
 
 MYSTBIN_REGEX = re.compile(r"(?:(?:https?://)?(?:beta\.)?(?:mystb\.in\/))?(?P<id>(?:[A-Z]{1}[a-z]+)*)(?P<ext>\.\w+)?")
 LOGGER = logging.getLogger(__name__)
@@ -77,7 +81,7 @@ class RedditMediaURL:
         self.filename = url.parts[1] + ".mp4"
 
     @classmethod
-    async def convert(cls: Type[Self], ctx: Context, argument: str) -> Self:
+    async def convert(cls: type[Self], ctx: Context, argument: str) -> Self:
         try:
             url = yarl.URL(argument)
         except Exception:

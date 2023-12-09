@@ -21,7 +21,7 @@ from discord.utils import format_dt
 from .formats import human_join, plural
 
 if TYPE_CHECKING:
-    from .context import Context
+    from ..context import Context
 
 # Monkey patch mins and secs into the units
 units = pdt.pdtLocales["en_US"].units

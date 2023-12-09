@@ -3,7 +3,7 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-This file was sourced from [RoboDanny](https://github.com/Rapptz/RoboDanny).
+Code below is sourced from [RoboDanny](https://github.com/Rapptz/RoboDanny)
 """
 
 from __future__ import annotations
@@ -14,29 +14,33 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     import asyncpg
 
-__all__ = ("MaybeAcquire", "db_init")
+__all__ = (
+    "MaybeAcquire",
+    "db_init",
+)
 
 
 class MaybeAcquire:
-    def __init__(
-        self,
-        connection: asyncpg.Connection[asyncpg.Record] | None,
-        *,
-        pool: asyncpg.Pool[asyncpg.Record],
-    ) -> None:
-        self.connection: asyncpg.Connection[asyncpg.Record] | None = connection
+    __slots__ = (
+        "pool",
+        "_cleanup",
+        "_connection",
+    )
+
+    def __init__(self, connection: asyncpg.Connection[asyncpg.Record] | None, *, pool: asyncpg.Pool[asyncpg.Record]) -> None:
         self.pool: asyncpg.Pool[asyncpg.Record] = pool
+        self._connection: asyncpg.Connection[asyncpg.Record] | None = connection
         self._cleanup: bool = False
 
     async def __aenter__(self) -> asyncpg.Connection[asyncpg.Record]:
-        if self.connection is None:
+        if self._connection is None:
             self._cleanup = True
-            self.connection = await self.pool.acquire()
-        return self.connection
+            self._connection = await self.pool.acquire()  # type: ignore # navigating stubs
+        return self._connection  # type: ignore # navigating stubs
 
     async def __aexit__(self, *args: Any) -> None:
         if self._cleanup:
-            await self.pool.release(self.connection)
+            await self.pool.release(self._connection)  # type: ignore # navigating stubs
 
 
 def _encode_jsonb(value: Any) -> str:
