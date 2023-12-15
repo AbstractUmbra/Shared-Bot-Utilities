@@ -8,8 +8,9 @@ Code below is sourced from [RoboDanny](https://github.com/Rapptz/RoboDanny)
 
 from __future__ import annotations
 
-import json
 from typing import TYPE_CHECKING, Any
+
+from .formats import from_json, to_json
 
 if TYPE_CHECKING:
     import asyncpg
@@ -44,11 +45,11 @@ class MaybeAcquire:
 
 
 def _encode_jsonb(value: Any) -> str:
-    return json.dumps(value)
+    return to_json(value)
 
 
 def _decode_jsonb(value: str) -> Any:
-    return json.loads(value)
+    return from_json(value)
 
 
 async def db_init(connection: asyncpg.Connection) -> None:
