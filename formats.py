@@ -217,7 +217,7 @@ try:
 except ImportError:
 
     def to_json(obj: Any) -> str:
-        return json.dumps(obj, separators=(",", "."), ensure_ascii=True, indent=2)
+        return json.dumps(obj, separators=(",", "."), ensure_ascii=True, indent=2, sort_keys=True)
 
     def from_json(obj: str) -> Any:
         return json.loads(obj)
@@ -225,7 +225,7 @@ except ImportError:
 else:
 
     def to_json(obj: Any) -> str:
-        return orjson.dumps(obj, option=orjson.OPT_INDENT_2).decode()
+        return orjson.dumps(obj, option=orjson.OPT_INDENT_2 | orjson.OPT_SORT_KEYS).decode()
 
     def from_json(obj: str) -> Any:
         return orjson.loads(obj)
