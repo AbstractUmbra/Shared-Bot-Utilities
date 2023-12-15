@@ -9,9 +9,9 @@ This file was sourced from [RoboDanny](https://github.com/Rapptz/RoboDanny).
 from __future__ import annotations
 
 import asyncio
-import json
-from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
+
+from .formats import from_json, to_json
 
 if TYPE_CHECKING:
     import pathlib
@@ -24,23 +24,17 @@ else:
 _defT = TypeVar("_defT")
 
 
-ObjectHook: TypeAlias = Callable[[dict[str, Any]], Any]
-
-
 class Config(Generic[_T]):
     """The "database" object. Internally based on ``json``."""
 
     def __init__(
         self,
-        name: pathlib.Path,
+        path: pathlib.Path,
+        /,
         *,
-        object_hook: ObjectHook | None = None,
-        encoder: type[json.JSONEncoder] | None = None,
         load_later: bool = False,
     ) -> None:
-        self.name = name
-        self.object_hook = object_hook
-        self.encoder = encoder
+        self.path = path
         self.loop = asyncio.get_event_loop()
         self.lock = asyncio.Lock()
         self._db: dict[str, _T] = {}
@@ -52,8 +46,8 @@ class Config(Generic[_T]):
 
     def load_from_file(self) -> None:
         try:
-            with self.name.open() as f:
-                self._db = json.load(f, object_hook=self.object_hook)
+            with self.path.open() as f:
+                self._db = from_json(f.read())
         except FileNotFoundError:
             self._db = {}
 
@@ -62,19 +56,12 @@ class Config(Generic[_T]):
             await self.loop.run_in_executor(None, self.load_from_file)
 
     def _dump(self) -> None:
-        temp = self.name.with_suffix(".tmp")
+        temp = self.path.with_suffix(".tmp")
         with temp.open("w", encoding="utf-8") as tmp:
-            json.dump(
-                self._db.copy(),
-                tmp,
-                ensure_ascii=True,
-                cls=self.encoder,
-                separators=(",", ":"),
-                indent=4,
-            )
+            tmp.write(to_json(self._db.copy()))
 
         # atomically move the file
-        temp.replace(self.name)
+        temp.replace(self.path)
 
     async def save(self) -> None:
         async with self.lock:

@@ -213,11 +213,11 @@ def clean_triple_backtick(line: str) -> str:
 
 
 try:
-    import orjson
+    import orjson  # type: ignore[reportMissingImports]  # may not always exist
 except ImportError:
 
     def to_json(obj: Any) -> str:
-        return json.dumps(obj, separators=(",", "."), ensure_ascii=True)
+        return json.dumps(obj, separators=(",", "."), ensure_ascii=True, indent=2)
 
     def from_json(obj: str) -> Any:
         return json.loads(obj)
@@ -225,7 +225,7 @@ except ImportError:
 else:
 
     def to_json(obj: Any) -> str:
-        return orjson.dumps(obj).decode()
+        return orjson.dumps(obj, option=orjson.OPT_INDENT_2).decode()
 
     def from_json(obj: str) -> Any:
         return orjson.loads(obj)
