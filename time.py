@@ -16,7 +16,6 @@ from typing import TYPE_CHECKING
 import parsedatetime as pdt
 from dateutil.relativedelta import relativedelta
 from discord.ext import commands
-from discord.utils import format_dt
 
 from .formats import human_join, plural
 
@@ -330,19 +329,15 @@ def human_timedelta(
     return " ".join(output) + str_suffix
 
 
+def ordinal(number: int) -> str:
+    return f"{number}{'tsnrhtdd'[(number//10%10!=1)*(number%10<4)*number%10::4]}"
+
+
 def hf_time(dt: datetime.datetime, *, with_time: bool = True) -> str:
     date_modif = ordinal(dt.day)
     if with_time:
         return dt.strftime(f"%A {date_modif} of %B %Y @ %H:%M %Z (%z)")
     return dt.strftime(f"%A {date_modif} of %B %Y")
-
-
-def ordinal(number: int) -> str:
-    return f"{number}{'tsnrhtdd'[(number//10%10!=1)*(number%10<4)*number%10::4]}"
-
-
-def format_relative(dt: datetime.datetime) -> str:
-    return format_dt(dt, "R")
 
 
 def resolve_next_weekday(
@@ -361,5 +356,22 @@ def resolve_next_weekday(
 
     while source.weekday() != target.value:
         source += datetime.timedelta(days=1)
+
+    return source
+
+
+def resolve_previous_weekday(
+    *, source: datetime.datetime | None = None, target: Weekday, current_week_included: bool = False
+) -> datetime.datetime:
+    source = source or datetime.datetime.now(datetime.timezone.utc)
+    weekday = source.weekday()
+
+    if weekday == target.value:
+        if current_week_included:
+            return source
+        return source + datetime.timedelta(days=7)
+
+    while source.weekday() != target.value:
+        source -= datetime.timedelta(days=1)
 
     return source
