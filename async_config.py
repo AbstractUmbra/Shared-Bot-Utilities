@@ -88,7 +88,10 @@ class Config(Generic[_T]):
 
     async def remove(self, key: Any) -> None:
         """Removes a config entry."""
-        del self._db[str(key)]
+        try:
+            del self._db[str(key)]
+        except KeyError:
+            return
         await self.save()
 
     def __contains__(self, item: Any) -> bool:
