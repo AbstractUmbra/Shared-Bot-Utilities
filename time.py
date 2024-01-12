@@ -59,7 +59,7 @@ class ShortTime:
             raise commands.BadArgument("invalid time provided")
 
         data = {k: int(v) for k, v in match.groupdict(default=0).items()}
-        now = now or datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
+        now = now or datetime.datetime.utcnow().replace(tzinfo=datetime.UTC)
         self.dt = now + relativedelta(**data)  # type: ignore # pyright dict expansion sadness
 
     @classmethod
@@ -72,7 +72,7 @@ class HumanTime:
     calendar = pdt.Calendar(version=pdt.VERSION_CONTEXT_STYLE)
 
     def __init__(self, argument: str, *, now: datetime.datetime | None = None) -> None:
-        now = now or datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
+        now = now or datetime.datetime.utcnow().replace(tzinfo=datetime.UTC)
         dt, status = self.calendar.parseDT(argument, sourceTime=now)
         assert isinstance(status, pdt.pdtContext)
         if not status.hasDateOrTime:
@@ -87,7 +87,7 @@ class HumanTime:
                 minute=now.minute,
                 second=now.second,
                 microsecond=now.microsecond,
-                tzinfo=datetime.timezone.utc,
+                tzinfo=datetime.UTC,
             )
 
         self.dt = dt
@@ -233,7 +233,7 @@ class UserFriendlyTime(commands.Converter):
             if status.accuracy == pdt.pdtContext.ACU_HALFDAY:
                 dt = dt.replace(day=now.day + 1)
 
-            result.dt = dt.replace(tzinfo=datetime.timezone.utc)
+            result.dt = dt.replace(tzinfo=datetime.UTC)
 
             if begin in (0, 1):
                 if begin == 1:
@@ -270,7 +270,7 @@ def human_timedelta(
     brief: bool = False,
     suffix: bool = True,
 ) -> str:
-    now = source or (datetime.datetime.now(datetime.timezone.utc))
+    now = source or (datetime.datetime.now(datetime.UTC))
     # Microsecond free zone
     now = now.replace(microsecond=0)
     dt = dt.replace(microsecond=0)
@@ -345,12 +345,13 @@ def resolve_next_weekday(
     source: datetime.datetime | None = None,
     target: Weekday,
     current_week_included: bool = False,
+    before_time: datetime.time | None = None,
 ) -> datetime.datetime:
-    source = source or datetime.datetime.now(datetime.timezone.utc)
+    source = source or datetime.datetime.now(datetime.UTC)
     weekday = source.weekday()
 
     if weekday == target.value:
-        if current_week_included:
+        if current_week_included and (before_time and source.time() < before_time):
             return source
         return source + datetime.timedelta(days=7)
 
@@ -363,7 +364,7 @@ def resolve_next_weekday(
 def resolve_previous_weekday(
     *, source: datetime.datetime | None = None, target: Weekday, current_week_included: bool = False
 ) -> datetime.datetime:
-    source = source or datetime.datetime.now(datetime.timezone.utc)
+    source = source or datetime.datetime.now(datetime.UTC)
     weekday = source.weekday()
 
     if weekday == target.value:

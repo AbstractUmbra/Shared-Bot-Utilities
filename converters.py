@@ -10,17 +10,18 @@ from __future__ import annotations
 import datetime
 import logging
 import re
-from typing import TYPE_CHECKING, Any, Literal, Sequence, TypedDict
+import zoneinfo
+from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
 import yarl
-import zoneinfo
 from discord import app_commands
 from discord.ext import commands
 
 from .time import hf_time
 
 if TYPE_CHECKING:
-    from typing_extensions import NotRequired, Self
+    from collections.abc import Sequence
+    from typing import NotRequired, Self
 
     from ..context import Context, GuildContext, Interaction
 
@@ -145,11 +146,11 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
         /,
         *,
         ctx: Context,
-        timezone: datetime.tzinfo | None = datetime.timezone.utc,
+        timezone: datetime.tzinfo | None = datetime.UTC,
         now: datetime.datetime | None = None,
         duckling_url: yarl.URL,
     ) -> list[tuple[datetime.datetime, int, int]]:
-        now = now or datetime.datetime.now(datetime.timezone.utc)
+        now = now or datetime.datetime.now(datetime.UTC)
 
         times: list[tuple[datetime.datetime, int, int]] = []
 
@@ -176,7 +177,7 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
                 elif time["dim"] == "duration":
                     times.append(
                         (
-                            datetime.datetime.now(datetime.timezone.utc)
+                            datetime.datetime.now(datetime.UTC)
                             + datetime.timedelta(seconds=time["value"]["normalized"]["value"]),
                             time["start"],
                             time["end"],
@@ -293,11 +294,11 @@ class DatetimeTransformer(app_commands.Transformer):
         /,
         *,
         interaction: Interaction,
-        timezone: datetime.tzinfo | None = datetime.timezone.utc,
+        timezone: datetime.tzinfo | None = datetime.UTC,
         now: datetime.datetime | None = None,
         duckling_url: yarl.URL,
     ) -> list[tuple[datetime.datetime, int, int]]:
-        now = now or datetime.datetime.now(datetime.timezone.utc)
+        now = now or datetime.datetime.now(datetime.UTC)
 
         times: list[tuple[datetime.datetime, int, int]] = []
 

@@ -8,13 +8,13 @@ This file was sourced from [RoboDanny](https://github.com/Rapptz/RoboDanny).
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from discord import app_commands
 from discord.ext import commands
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Callable, Iterable
 
     from discord.ext.commands._types import Check
 

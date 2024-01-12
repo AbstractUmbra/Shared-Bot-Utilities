@@ -15,7 +15,7 @@ import discord
 from discord import app_commands
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    from typing import Self
 
     from extensions.stats import Stats
     from utilities.context import Interaction
@@ -36,7 +36,7 @@ class BaseModal(discord.ui.Modal):
         trace = "\n".join(traceback.format_exception(exc_type, exc, tb))
 
         e.add_field(name="Error", value=f"```py\n{trace}\n```")
-        e.timestamp = datetime.datetime.now(datetime.timezone.utc)
+        e.timestamp = datetime.datetime.now(datetime.UTC)
 
         stats: Stats = interaction.client.get_cog("Stats")  # type: ignore
         try:
@@ -89,7 +89,7 @@ class BaseView(discord.ui.View):
         else:
             embed.description = f"```py\n{clean}\n```"
 
-        embed.timestamp = datetime.datetime.now(datetime.timezone.utc)
+        embed.timestamp = datetime.datetime.now(datetime.UTC)
         await interaction.client.logging_webhook.send(embed=embed)
         await interaction.client.owner.send(embed=embed)
 
