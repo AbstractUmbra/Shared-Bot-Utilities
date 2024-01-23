@@ -16,7 +16,7 @@ from .formats import from_json, to_json
 if TYPE_CHECKING:
     import pathlib
 
-    from typing_extensions import TypeVar  # noqa: TCH004, F811
+    from typing_extensions import TypeVar  # noqa: TCH004
 
     _T = TypeVar("_T", default=Any)
 else:
