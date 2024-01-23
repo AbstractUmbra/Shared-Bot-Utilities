@@ -151,7 +151,7 @@ def cache(
                 return True
 
         def _invalidate_containing(key: str) -> None:
-            to_remove = [k for k in _internal_cache if key in k]
+            to_remove = [k for k in _internal_cache.keys() if key in k]  # noqa: SIM118, LRU ain't iterable
             for k in to_remove:
                 try:
                     del _internal_cache[k]
