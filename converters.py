@@ -14,7 +14,7 @@ import zoneinfo
 from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
 import yarl
-from discord import app_commands
+from discord import Webhook, app_commands
 from discord.ext import commands
 
 from .time import hf_time
@@ -34,6 +34,7 @@ __all__ = (
     "DatetimeConverter",
     "WhenAndWhatTransformer",
     "DatetimeTransformer",
+    "WebhookTransformer",
     "BadDatetimeTransform",
     "MystbinPasteConverter",
 )
@@ -484,3 +485,16 @@ class MystbinPasteConverter(commands.Converter[str]):
             raise commands.ConversionError(self, ValueError("No Mystbin IDs found in this text."))
 
         return matches["id"]
+
+
+class WebhookTransformer(app_commands.Transformer):
+    async def transform(self, interaction: Interaction, value: str) -> Webhook:
+        try:
+            wh = Webhook.from_url(value)
+        except ValueError as err:
+            await interaction.response.send_message(
+                "Sorry but the provided webhook url is invalid. Perhaps a typo?", ephemeral=True
+            )
+            raise ValueError from err
+
+        return wh
