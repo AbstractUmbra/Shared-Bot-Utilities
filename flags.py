@@ -62,5 +62,17 @@ class SubscribedEventsFlags(BaseFlags):
         return 1 << 3
 
     @flag_value
-    def jumbo_cactpot(self) -> int:
+    def jumbo_cactpot_na(self) -> int:
         return 1 << 4
+
+    @flag_value
+    def jumbo_cactpot_eu(self) -> int:
+        return 1 << 5
+
+    @flag_value
+    def jumbo_cactpot_jp(self) -> int:
+        return 1 << 6
+
+    @flag_value
+    def jumbo_cactpot_oce(self) -> int:
+        return 1 << 7
