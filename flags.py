@@ -76,3 +76,7 @@ class SubscribedEventsFlags(BaseFlags):
     @flag_value
     def jumbo_cactpot_oce(self) -> int:
         return 1 << 7
+
+    @flag_value
+    def gate(self) -> int:
+        return 1 << 8

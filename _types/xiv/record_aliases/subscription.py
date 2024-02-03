@@ -24,3 +24,6 @@ class EventRecord(TypedDict):
     daily_role_id: int | None
     weekly_role_id: int | None
     fashion_report_role_id: int | None
+    jumbo_cactpot_role_id: int | None
+    ocean_fishing_role_id: int | None
+    gate_role_id: int | None
