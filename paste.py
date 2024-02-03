@@ -17,7 +17,7 @@ async def create_paste(
     session: ClientSession,
 ) -> str:
     async with session.post(
-        "https://paste.abstractumbra.dev/data/post", body=content, headers={"Content-Type": f"text/{language}"}
+        "https://paste.abstractumbra.dev/data/post", data=content, headers={"Content-Type": f"text/{language}"}
     ) as resp:
         data = await resp.json()
         return data["key"]
