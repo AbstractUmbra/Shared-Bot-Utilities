@@ -18,10 +18,17 @@ if TYPE_CHECKING:
 
     from discord.ext.commands._types import Check
 
-    from ..context import GuildContext
+    from ..context import Context, GuildContext
 
 
 T = TypeVar("T")
+
+
+def restricted_author(*ids: int) -> Check[Context]:
+    def predicate(ctx: Context) -> bool:
+        return ctx.author.id in ids
+
+    return commands.check(predicate)
 
 
 async def check_permissions(
