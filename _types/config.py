@@ -10,6 +10,7 @@ __all__ = ("RootConfig",)
 
 class BotConfig(TypedDict):
     token: str
+    dev_guilds: NotRequired[list[int]]
 
 
 class DatabaseConfig(TypedDict, total=False):
