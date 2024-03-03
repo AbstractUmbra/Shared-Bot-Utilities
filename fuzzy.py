@@ -83,8 +83,7 @@ def _extraction_generator(
     choices: Iterable[str],
     scorer: Callable[[str, str], int] = ...,
     score_cutoff: int = ...,
-) -> Generator[tuple[str, int], None, None]:
-    ...
+) -> Generator[tuple[str, int], None, None]: ...
 
 
 @overload
@@ -93,8 +92,7 @@ def _extraction_generator(
     choices: dict[str, T],
     scorer: Callable[[str, str], int] = ...,
     score_cutoff: int = ...,
-) -> Generator[tuple[str, int, T], None, None]:
-    ...
+) -> Generator[tuple[str, int, T], None, None]: ...
 
 
 def _extraction_generator(
@@ -123,8 +121,7 @@ def extract(
     scorer: Callable[[str, str], int] = ...,
     score_cutoff: int = ...,
     limit: int | None = ...,
-) -> list[tuple[str, int]]:
-    ...
+) -> list[tuple[str, int]]: ...
 
 
 @overload
@@ -135,8 +132,7 @@ def extract(
     scorer: Callable[[str, str], int] = ...,
     score_cutoff: int = ...,
     limit: int | None = ...,
-) -> list[tuple[str, int, T]]:
-    ...
+) -> list[tuple[str, int, T]]: ...
 
 
 def extract(
@@ -161,8 +157,7 @@ def extract_one(
     *,
     scorer: Callable[[str, str], int] = ...,
     score_cutoff: int = ...,
-) -> tuple[str, int] | None:
-    ...
+) -> tuple[str, int] | None: ...
 
 
 @overload
@@ -172,8 +167,7 @@ def extract_one(
     *,
     scorer: Callable[[str, str], int] = ...,
     score_cutoff: int = ...,
-) -> tuple[str, int, T] | None:
-    ...
+) -> tuple[str, int, T] | None: ...
 
 
 def extract_one(
@@ -200,8 +194,7 @@ def extract_or_exact(
     scorer: Callable[[str, str], int] = ...,
     score_cutoff: int = ...,
     limit: int | None = ...,
-) -> list[tuple[str, int]]:
-    ...
+) -> list[tuple[str, int]]: ...
 
 
 @overload
@@ -212,8 +205,7 @@ def extract_or_exact(
     scorer: Callable[[str, str], int] = ...,
     score_cutoff: int = ...,
     limit: int | None = ...,
-) -> list[tuple[str, int, T]]:
-    ...
+) -> list[tuple[str, int, T]]: ...
 
 
 def extract_or_exact(
@@ -248,8 +240,7 @@ def extract_matches(
     *,
     scorer: Callable[[str, str], int] = ...,
     score_cutoff: int = ...,
-) -> list[tuple[str, int]]:
-    ...
+) -> list[tuple[str, int]]: ...
 
 
 @overload
@@ -259,8 +250,7 @@ def extract_matches(
     *,
     scorer: Callable[[str, str], int] = ...,
     score_cutoff: int = ...,
-) -> list[tuple[str, int, T]]:
-    ...
+) -> list[tuple[str, int, T]]: ...
 
 
 def extract_matches(
@@ -299,8 +289,7 @@ def finder(
     *,
     key: Callable[[T], str] | None = ...,
     raw: Literal[True],
-) -> list[tuple[int, int, T]]:
-    ...
+) -> list[tuple[int, int, T]]: ...
 
 
 @overload
@@ -310,8 +299,7 @@ def finder(
     *,
     key: Callable[[T], str] | None = ...,
     raw: Literal[False],
-) -> list[T]:
-    ...
+) -> list[T]: ...
 
 
 @overload
@@ -321,8 +309,7 @@ def finder(
     *,
     key: Callable[[T], str] | None = ...,
     raw: bool = ...,
-) -> list[T]:
-    ...
+) -> list[T]: ...
 
 
 def finder(

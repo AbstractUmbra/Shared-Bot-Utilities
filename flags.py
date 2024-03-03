@@ -61,12 +61,10 @@ class flag_value:
         self.__doc__: str | None = func.__doc__
 
     @overload
-    def __get__(self, instance: None, owner: type[Any]) -> Self:
-        ...
+    def __get__(self, instance: None, owner: type[Any]) -> Self: ...
 
     @overload
-    def __get__(self, instance: T, owner: type[T]) -> bool:
-        ...
+    def __get__(self, instance: T, owner: type[T]) -> bool: ...
 
     def __get__(self, instance: T | None, owner: type[T]) -> Any:
         if instance is None:
