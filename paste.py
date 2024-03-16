@@ -20,4 +20,6 @@ async def create_paste(
         "https://paste.abstractumbra.dev/data/post", data=content, headers={"Content-Type": f"text/{language}"}
     ) as resp:
         data = await resp.json()
-        return data["key"]
+        paste_key = data["key"]
+
+        return f"https://paste.abstractumbra.dev/{paste_key}"
