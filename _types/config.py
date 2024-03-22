@@ -8,9 +8,19 @@ if TYPE_CHECKING:
 __all__ = ("RootConfig",)
 
 
+class _RTFMPackage(TypedDict):
+    package: str
+    base_url: str
+    inventory_url: str
+
+
 class BotConfig(TypedDict):
     token: str
     dev_guilds: NotRequired[list[int]]
+
+
+class RTFMConfig(TypedDict):
+    packages: list[_RTFMPackage]
 
 
 class DatabaseConfig(TypedDict, total=False):
@@ -21,6 +31,13 @@ class DatabaseConfig(TypedDict, total=False):
     password: str
     database: str
     port: int
+
+
+class RedisConfig(TypedDict):
+    host: str
+    port: int
+    password: str
+    mock: bool
 
 
 class WebhookConfig(TypedDict):
@@ -82,9 +99,11 @@ class Logging(TypedDict):
 
 class RootConfig(TypedDict, total=False):
     bot: Required[BotConfig]
+    rtfm: Required[RTFMConfig]
     owner_ids: Required[list[int]]
     intents: int
     postgresql: Required[DatabaseConfig]
+    redis: Required[RedisConfig]
     webhooks: Required[WebhookConfig]
     tokens: TokenConfig
     mangadex: MangaDexConfig
