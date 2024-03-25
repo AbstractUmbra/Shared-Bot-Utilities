@@ -551,7 +551,7 @@ class Inventory(commands.Converter):
         """Convert url to Intersphinx inventory URL."""
         await ctx.typing()
         try:
-            inventory = await _inventory_parser.fetch_inventory(url)
+            inventory = await _inventory_parser.fetch_inventory(url, session=ctx.bot.session)
         except _inventory_parser.InvalidHeaderError:
             raise commands.BadArgument("Unable to parse inventory because of invalid header, check if URL is correct.")
         else:

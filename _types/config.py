@@ -34,7 +34,7 @@ class DatabaseConfig(TypedDict, total=False):
 
 
 class RedisConfig(TypedDict):
-    host: str
+    url: str
     port: int
     password: str
     mock: bool
@@ -103,7 +103,7 @@ class RootConfig(TypedDict, total=False):
     owner_ids: Required[list[int]]
     intents: int
     postgresql: Required[DatabaseConfig]
-    redis: Required[RedisConfig]
+    redis: RedisConfig
     webhooks: Required[WebhookConfig]
     tokens: TokenConfig
     mangadex: MangaDexConfig
