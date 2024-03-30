@@ -3,12 +3,14 @@ import logging
 from collections.abc import Callable
 from typing import (
     Any,
+    Generic,
     Literal,
     NamedTuple,
     TypeVar,
 )
 
 from aiohttp import web
+from aiohttp.web import Request
 from discord.ext import commands
 from discord.utils import MISSING
 
@@ -16,9 +18,11 @@ __all__: tuple[str, ...] = (
     "BaseCog",
     "WebserverCog",
     "route",
+    "Request",
 )
 
 FuncT = TypeVar("FuncT", bound="Callable[..., Any]")
+BotT = TypeVar("BotT", bound="commands.Bot")
 
 
 class Route(NamedTuple):
@@ -79,15 +83,15 @@ class _BaseWebserver:
             await self._webserver.stop()
 
 
-class BaseCog(commands.Cog):
-    def __init__(self, bot: commands.Bot, /) -> None:
-        self.bot: commands.Bot = bot
+class BaseCog(commands.Cog, Generic[BotT]):
+    def __init__(self, bot: BotT, /) -> None:
+        self.bot: BotT = bot
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}>"
 
 
-class WebserverCog(BaseCog, _BaseWebserver):
+class WebserverCog(BaseCog[BotT], _BaseWebserver):
     """A webserver cog that implements cog_load and cog_unload to set up the webserver.
 
     .. code-block:: python3

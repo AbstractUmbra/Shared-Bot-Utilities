@@ -227,7 +227,7 @@ else:
     def to_json(obj: Any) -> str:
         return orjson.dumps(obj, option=orjson.OPT_INDENT_2 | orjson.OPT_SORT_KEYS).decode()
 
-    def from_json(obj: str) -> Any:
+    def from_json(obj: str) -> Any:  # pyright: ignore[reportRedeclaration] # this is fine
         return orjson.loads(obj)
 
 
