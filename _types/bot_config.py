@@ -32,9 +32,18 @@ class MiscConfig(TypedDict):
     mystbin_token: str
 
 
+class RedditConfig(TypedDict):
+    client_id: str
+    client_secret: str
+    username: str
+    password: str
+    user_agent: str
+
+
 class Config(TypedDict):
     bot: BotConfig
     database: DatabaseConfig
     logging: LoggingConfig
     misc: MiscConfig
+    reddit: RedditConfig
     conditional_access: NotRequired[dict[str, list[int]]]
