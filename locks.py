@@ -9,8 +9,8 @@ from functools import partial
 from typing import TYPE_CHECKING, Any, Concatenate, ParamSpec, TypeVar
 from weakref import WeakValueDictionary
 
-from utilities.shared.errors import LockedResourceError
-from utilities.shared.functions import Argument, BoundArgs, command_wraps, get_arg_value_wrapper, get_bound_args
+from .errors import LockedResourceError
+from .functions import Argument, BoundArgs, command_wraps, get_arg_value_wrapper, get_bound_args
 
 if TYPE_CHECKING:
     from types import TracebackType

@@ -4,15 +4,20 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
-from ._types.nihongo import (
-    JishoWordsPayload,
-    KanjiDevKanjiPayload,
-    KanjiDevWordsPayload,
-    _JishoAttributions,
-    _JishoJapanesePayload,
-    _JishoSenses,
-    _KanjiDevVariants,
-)
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ._types.nihongo import (
+        JishoWordsPayload,
+        KanjiDevKanjiPayload,
+        KanjiDevWordsPayload,
+        _JishoAttributions,
+        _JishoJapanesePayload,
+        _JishoSenses,
+        _KanjiDevVariants,
+    )
 
 __all__ = (
     "KanjiDevKanji",

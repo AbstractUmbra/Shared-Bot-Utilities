@@ -11,7 +11,7 @@ from typing import Any, TypeVar
 
 from discord.errors import Forbidden
 
-from utilities.shared.errors import handle_forbidden_from_block
+from .errors import handle_forbidden_from_block
 
 _background_tasks: set[asyncio.Task] = set()
 

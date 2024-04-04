@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
     from discord import Forbidden, Message
 
-    from utilities.shared.converters import MemberOrUser
+    from .converters import MemberOrUser
 
 
 LOGGER = logging.getLogger(__name__)

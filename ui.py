@@ -20,7 +20,8 @@ if TYPE_CHECKING:
     from typing import Self
 
     from extensions.stats import Stats
-    from utilities.context import Interaction
+
+    from ..context import Interaction
 
 __all__ = ("BaseModal", "BaseView", "ConfirmationView")
 

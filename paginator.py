@@ -18,14 +18,13 @@ import discord
 from discord.ext import menus
 from discord.ext.commands import Paginator as CommandPaginator
 
-from utilities.shared.scheduling import create_task
-
+from .scheduling import create_task
 from .ui import BaseView
 
 LOGGER = logging.getLogger(__name__)
 
 try:
-    import hondana  # type: ignore[reportMissingImports]  # may not always exist
+    import hondana  # pyright: ignore[reportMissingImports]  # may not always exist
 except ModuleNotFoundError:
     HAS_HONDANA = False
 else:
@@ -403,7 +402,7 @@ if HAS_HONDANA:
             if chapter.uploader:
                 self.add_field(name="Uploader:", value=chapter.uploader.username, inline=False)
 
-            if parent.content_rating is hondana.ContentRating.safe or (nsfw_allowed is True):  # type: ignore[reportUnboundVariable] # hondana may not be installed, we're covered
+            if parent.content_rating is hondana.ContentRating.safe or (nsfw_allowed is True):  # pyright: ignore[reportUnboundVariable] # hondana may not be installed, we're covered
                 self.set_thumbnail(url=parent.cover_url())
 
             return self
@@ -425,12 +424,12 @@ if HAS_HONDANA:
                 self.add_field(name="Attributed Authors:", value=", ".join([artist.name for artist in manga.authors]))
             if manga.status:
                 self.add_field(name="Publication status:", value=str(manga.status).title(), inline=False)
-                if manga.status is hondana.MangaStatus.completed:  # type: ignore[reportUnboundVariable] # hondana may not be installed, we're covered
+                if manga.status is hondana.MangaStatus.completed:  # pyright: ignore[reportUnboundVariable] # hondana may not be installed, we're covered
                     self.add_field(name="Last Volume:", value=manga.last_volume)
                     self.add_field(name="Last Chapter:", value=manga.last_chapter)
             self.set_footer(text=manga.id)
 
-            if manga.content_rating is hondana.ContentRating.safe or (nsfw_allowed is True):  # type: ignore[reportUnboundVariable] # hondana may not be installed, we're covered
+            if manga.content_rating is hondana.ContentRating.safe or (nsfw_allowed is True):  # pyright: ignore[reportUnboundVariable] # hondana may not be installed, we're covered
                 cover = manga.cover_url() or await manga.get_cover()
                 if cover:
                     self.set_image(url=manga.cover_url())

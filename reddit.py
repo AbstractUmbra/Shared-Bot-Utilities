@@ -9,8 +9,8 @@ AUTH_ROUTE_BASE = "https://www.reddit.com/api/v1"
 ROUTE_BASE = "https://oauth.reddit.com/"
 
 if TYPE_CHECKING:
-    from utilities.shared._types.bot_config import RedditConfig
-    from utilities.shared._types.xiv.reddit.auth import PasswordAuth
+    from ._types.bot_config import RedditConfig
+    from ._types.xiv.reddit.auth import PasswordAuth
 
 __all__ = ("AuthHandler",)
 
