@@ -45,7 +45,15 @@ class SecretHandler:
 class AuthHandler:
     __handler: SecretHandler
 
-    __slots__ = ("__handler",)
+    __slots__ = (
+        "__handler",
+        "session",
+        "config",
+    )
+
+    def __init__(self, *, session: aiohttp.ClientSession, config: RedditConfig) -> None:
+        self.session = session
+        self.config = config
 
     @property
     def token(self) -> str:
@@ -60,23 +68,26 @@ class AuthHandler:
         return self.__handler.expires
 
     def has_expired(self) -> bool:
+        handler = getattr(self, "__handler")
+        if handler is None:
+            return True
         return datetime.datetime.now(datetime.UTC) > self.__handler.expires
 
     def to_bearer(self) -> str:
         return f"Bearer {self.__handler.token}"
 
-    async def refresh(self, *, session: aiohttp.ClientSession, config: RedditConfig) -> Self:
-        basic_auth = aiohttp.BasicAuth(config["client_id"], config["client_secret"])
+    async def refresh(self) -> Self:
+        basic_auth = aiohttp.BasicAuth(self.config["client_id"], self.config["client_secret"])
         body = {
-            "username": config["username"],
-            "password": config["password"],
+            "username": self.config["username"],
+            "password": self.config["password"],
             "grant_type": "password",
             "scope": "history read",
         }
-        headers = {"User-Agent": config["user_agent"]}
+        headers = {"User-Agent": self.config["user_agent"]}
 
         async with (
-            session.post(f"{AUTH_ROUTE_BASE}/access_token", data=body, auth=basic_auth, headers=headers) as resp,
+            self.session.post(f"{AUTH_ROUTE_BASE}/access_token", data=body, auth=basic_auth, headers=headers) as resp,
         ):
             response: PasswordAuth = await resp.json()
 
@@ -88,8 +99,8 @@ class AuthHandler:
             )
         return self
 
-    async def revoke(self, *, session: aiohttp.ClientSession, config: RedditConfig) -> None:
+    async def revoke(self) -> None:
         body_data = {"token": self.__handler.token, "token_type_hint": "access_token"}
-        headers = {"User-Agent": config["user_agent"]}
-        auth = aiohttp.BasicAuth(config["client_id"], config["client_secret"])
-        await session.post(f"{AUTH_ROUTE_BASE}/revoke_token", headers=headers, data=body_data, auth=auth)
+        headers = {"User-Agent": self.config["user_agent"]}
+        auth = aiohttp.BasicAuth(self.config["client_id"], self.config["client_secret"])
+        await self.session.post(f"{AUTH_ROUTE_BASE}/revoke_token", headers=headers, data=body_data, auth=auth)
