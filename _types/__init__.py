@@ -1,4 +1,3 @@
-from .config import *
 from .currencies import *
 from .danbooru import *
 from .dnd import *

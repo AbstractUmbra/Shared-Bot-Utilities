@@ -100,7 +100,7 @@ class JishoWord:
     def __init__(self, payload: JishoWordsPayload) -> None:
         self._data = payload
         self.slug: str = self._data["slug"]
-        self.is_common: bool = self._data["is_common"]
+        self.is_common: bool = self._data.get("is_common", False)
 
     @property
     def tags(self) -> list[str]:
