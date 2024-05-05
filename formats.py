@@ -20,7 +20,7 @@ import discord
 from discord.utils import escape_markdown
 
 CONTROL_CHARS = re.compile(
-    "[%s]" % re.escape("".join(chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("C"))),
+    "[{}]".format(re.escape("".join(chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("C")))),
 )
 
 
@@ -165,7 +165,7 @@ def clean_single_backtick(line: str) -> str:
     that would be discordified.
     """
     if re.search("[^`]`[^`]", line) is not None:
-        return "`%s`" % clean_double_backtick(line)
+        return f"`{clean_double_backtick(line)}`"
     if line[:2] == "``":
         line = "\u200b" + line
     if line[-1] == "`":
