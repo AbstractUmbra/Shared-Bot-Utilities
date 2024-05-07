@@ -84,7 +84,7 @@ def lock(
     """
 
     def decorator(
-        func: Callable[Concatenate[P], Coroutine[Any, Any, T]],
+        func: Callable[Concatenate[P], Coroutine[Any, Any, T | None]],
     ) -> Callable[Concatenate[P], Coroutine[Any, Any, T | None]]:
         name = func.__name__
 
