@@ -31,6 +31,13 @@ def restricted_author(*ids: int) -> Check[Context]:
     return commands.check(predicate)
 
 
+def restricted_guild(*ids: int) -> Check[GuildContext]:
+    def predicate(ctx: Context) -> bool:
+        return bool(ctx.guild) and ctx.guild.id in ids
+
+    return commands.check(predicate)
+
+
 async def check_permissions(
     ctx: GuildContext,
     perms: dict[str, bool],
