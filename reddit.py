@@ -4,6 +4,7 @@ import datetime
 from typing import TYPE_CHECKING, Self
 
 import aiohttp
+from discord.utils import MISSING
 
 AUTH_ROUTE_BASE = "https://www.reddit.com/api/v1"
 ROUTE_BASE = "https://oauth.reddit.com/"
@@ -43,8 +44,6 @@ class SecretHandler:
 
 
 class AuthHandler:
-    __handler: SecretHandler
-
     __slots__ = (
         "__handler",
         "session",
@@ -54,6 +53,7 @@ class AuthHandler:
     def __init__(self, *, session: aiohttp.ClientSession, config: RedditConfig) -> None:
         self.session = session
         self.config = config
+        self.__handler: SecretHandler = MISSING
 
     @property
     def token(self) -> str:
@@ -68,8 +68,7 @@ class AuthHandler:
         return self.__handler.expires
 
     def has_expired(self) -> bool:
-        handler = getattr(self, "__handler")
-        if handler is None:
+        if self.__handler is MISSING:
             return True
         return datetime.datetime.now(datetime.UTC) > self.__handler.expires
 
@@ -77,6 +76,9 @@ class AuthHandler:
         return f"Bearer {self.__handler.token}"
 
     async def refresh(self) -> Self:
+        if not self.has_expired():
+            return self
+
         basic_auth = aiohttp.BasicAuth(self.config["client_id"], self.config["client_secret"])
         body = {
             "username": self.config["username"],
