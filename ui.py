@@ -14,8 +14,6 @@ from typing import TYPE_CHECKING
 import discord
 from discord import app_commands
 
-from utilities.shared.paste import create_paste
-
 if TYPE_CHECKING:
     from typing import Self
 
@@ -80,7 +78,7 @@ class BaseView(discord.ui.View):
         clean = "".join(trace)
         if len(clean) >= 2000:
             password = secrets.token_urlsafe(16)
-            paste = await create_paste(content=clean, password=password, mb_client=interaction.client.mb_client)
+            paste = await interaction.client.create_paste(content=clean, password=password)
             embed.description = (
                 f"Error was too long to send in a codeblock, so I have pasted it [here]({paste})."
                 f"\nThe password is `{password}`."
