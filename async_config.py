@@ -73,7 +73,7 @@ class Config(Generic[_T]):
     @overload
     def get(self, key: Any, default: _defT) -> _T | _defT: ...
 
-    def get(self, key: Any, default: _defT = None) -> _T | _defT | None:
+    def get(self, key: Any, default: _defT | None = None) -> _T | _defT | None:
         """Retrieves a config entry."""
         return self._db.get(str(key), default)
 
