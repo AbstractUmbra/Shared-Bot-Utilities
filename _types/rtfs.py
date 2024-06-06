@@ -9,6 +9,6 @@ class RTFMData(TypedDict):
 
 
 class RTFSResponse(TypedDict):
-    nodes: dict[str, RTFMData]
+    results: dict[str, RTFMData]
     query_time: float
-    commit: str
+    commit_sha: str
