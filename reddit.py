@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 import logging
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypedDict, TypeVar
 
 import aiohttp
 from discord.utils import MISSING
@@ -11,7 +11,6 @@ AUTH_ROUTE_BASE = "https://www.reddit.com/api/v1"
 ROUTE_BASE = "https://oauth.reddit.com/"
 
 if TYPE_CHECKING:
-    from ._types.bot_config import RedditConfig
     from ._types.xiv.reddit.auth import PasswordAuth
 
 __all__ = ("RedditHandler",)
@@ -19,6 +18,14 @@ __all__ = ("RedditHandler",)
 T = TypeVar("T")
 
 LOGGER = logging.getLogger(__name__)
+
+
+class RedditConfig(TypedDict):
+    client_id: str
+    client_secret: str
+    username: str
+    password: str
+    user_agent: str
 
 
 class _RedditSecretHandler:

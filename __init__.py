@@ -4,7 +4,6 @@ from . import (
     checks as checks,
     converters as converters,
     db as db,
-    flags as flags,
     fuzzy as fuzzy,
     markdown as markdown,
     nihongo as nihongo,
