@@ -109,12 +109,9 @@ class RedditHandler:
         ):
             response: PasswordAuth = await resp.json()
 
-        if hasattr(self, "__handler"):
-            self.__handler._update_from_payload(response)
-        else:
-            self.__handler = _RedditSecretHandler(
-                response["access_token"], expires=response["expires_in"], scopes=response["scope"]
-            )
+        self.__handler = _RedditSecretHandler(
+            response["access_token"], expires=response["expires_in"], scopes=response["scope"]
+        )
         return self
 
     async def revoke(self) -> None:
