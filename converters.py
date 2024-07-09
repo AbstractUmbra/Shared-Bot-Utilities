@@ -398,9 +398,7 @@ class DatetimeTransformer(app_commands.Transformer):
             duckling_url=duckling_url,
         )
 
-        return [
-            app_commands.Choice(name=hf_time(when, with_time=True), value=when.isoformat()) for when, _, _ in parsed_times
-        ]
+        return [app_commands.Choice(name=hf_time(when, with_time=True), value=value) for when, _, _ in parsed_times]
 
 
 class WhenAndWhatTransformer(DatetimeTransformer):
