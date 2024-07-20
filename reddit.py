@@ -13,11 +13,18 @@ ROUTE_BASE = "https://oauth.reddit.com/"
 if TYPE_CHECKING:
     from ._types.xiv.reddit.auth import PasswordAuth
 
-__all__ = ("RedditHandler",)
+__all__ = (
+    "RedditHandler",
+    "RedditError",
+)
 
 T = TypeVar("T")
 
 LOGGER = logging.getLogger(__name__)
+
+
+class RedditError(Exception):
+    pass
 
 
 class RedditConfig(TypedDict):
