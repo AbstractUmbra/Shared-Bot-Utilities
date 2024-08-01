@@ -53,6 +53,12 @@ class MarkdownBuilder:
         self._inner += " " + text
 
     @after_markdown
+    def add_subtitle(self, text: str, /) -> None:
+        lines = self._inner.split("\n")
+        lines.append(f"-# {text}")
+        self._inner = "\n".join(lines)
+
+    @after_markdown
     def add_link(self, *, url: StrOrUrl, text: str) -> None:
         self._inner += f"[{text}]({url})"
 
