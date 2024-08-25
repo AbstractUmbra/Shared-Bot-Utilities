@@ -131,7 +131,7 @@ class RedditHandler:
         token_handler = await self.get_token()
         headers = self.headers.copy()
         headers.update({"Authorization": token_handler.to_bearer()})
-        async with self.session.get(url, headers=headers, params={"limit": limit}) as resp:
+        async with self.session.get(url, headers=headers, params={"limit": str(limit)}) as resp:
             if not resp.ok:
                 LOGGER.error("The API request to Reddit has failed with the status code: '%s'", resp.status)
                 raise ValueError("Reddit API request failed.")
