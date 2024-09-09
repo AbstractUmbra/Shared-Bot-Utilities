@@ -131,7 +131,7 @@ def update_wrapper_globals(
         name=wrapper.__name__,
         argdefs=wrapper.__defaults__,
         closure=wrapper.__closure__,
-    )  # type: ignore
+    )  # pyright: ignore[reportReturnType] # it is valid but casting is pain
 
 
 def command_wraps(
