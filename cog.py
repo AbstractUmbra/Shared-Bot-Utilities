@@ -99,10 +99,12 @@ class WebserverCog(BaseCog[BotT], _BaseWebserver):
         from aiohttp import web
         from discord.ext.duck import webserver
 
+
         class MyWSCog(webserver.WebserverCog, port=8080):
-            @webserver.route('GET', '/stats')
-            async def stats(self, request: web.Request) :
-                return web.json_response({'stats': {'servers': 1e9}})
+            @webserver.route("GET", "/stats")
+            async def stats(self, request: web.Request):
+                return web.json_response({"stats": {"servers": 1e9}})
+
 
         # then, somewhere:
         await bot.add_cog(MyWSCog())
