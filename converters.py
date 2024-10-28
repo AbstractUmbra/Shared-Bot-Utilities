@@ -30,14 +30,14 @@ MYSTBIN_REGEX = re.compile(r"(?:(?:https?://)?(?:beta\.)?(?:mystb\.in\/))?(?P<id
 LOGGER = logging.getLogger(__name__)
 
 __all__ = (
-    "RedditMediaURL",
-    "WhenAndWhatConverter",
-    "DatetimeConverter",
-    "WhenAndWhatTransformer",
-    "DatetimeTransformer",
-    "WebhookTransformer",
     "BadDatetimeTransform",
+    "DatetimeConverter",
+    "DatetimeTransformer",
     "MystbinPasteConverter",
+    "RedditMediaURL",
+    "WebhookTransformer",
+    "WhenAndWhatConverter",
+    "WhenAndWhatTransformer",
 )
 
 
@@ -489,7 +489,7 @@ class MystbinPasteConverter(commands.Converter[str]):
 class WebhookTransformer(app_commands.Transformer):
     async def transform(self, interaction: Interaction, value: str) -> Webhook:
         try:
-            wh = Webhook.from_url(value)
+            wh = Webhook.from_url(value, client=interaction.client, session=interaction.client.session)
         except ValueError as err:
             await interaction.response.send_message(
                 "Sorry but the provided webhook url is invalid. Perhaps a typo?", ephemeral=True
