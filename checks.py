@@ -18,10 +18,15 @@ if TYPE_CHECKING:
 
     from discord.ext.commands._types import Check
 
-    from ..context import Context, GuildContext
+    from ..context import Context, GuildContext, Interaction
 
 
 T = TypeVar("T")
+
+
+async def disabled_interaction(interaction: Interaction) -> bool:
+    await interaction.response.send_message("Sorry, this functionality is currently disabled.", ephemeral=True)
+    return False
 
 
 def restricted_author(*ids: int) -> Check[Context]:
