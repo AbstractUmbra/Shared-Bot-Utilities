@@ -49,6 +49,10 @@ class BaseModal(discord.ui.Modal):
 class BaseView(discord.ui.View):
     message: discord.Message | discord.PartialMessage
 
+    @property
+    def buttons(self) -> list[discord.ui.Button[Self]]:
+        return [*filter(lambda c: isinstance(c, discord.ui.Button), self.children)]  # pyright: ignore[reportReturnType] # filter predicate isn't a valid typeguard
+
     async def on_error(
         self,
         interaction: Interaction,
@@ -89,6 +93,11 @@ class BaseView(discord.ui.View):
         embed.timestamp = datetime.datetime.now(datetime.UTC)
         await interaction.client.logging_webhook.send(embed=embed)
         await interaction.client.owner.send(embed=embed)
+
+    def _enable_all_buttons(self) -> None:
+        for button in self.children:
+            if isinstance(button, discord.ui.Button):
+                button.disabled = False
 
     def _disable_all_buttons(self) -> None:
         for item in self.children:
