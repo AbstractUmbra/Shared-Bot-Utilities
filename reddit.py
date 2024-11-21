@@ -14,8 +14,8 @@ if TYPE_CHECKING:
     from ._types.xiv.reddit.auth import PasswordAuth
 
 __all__ = (
-    "RedditHandler",
     "RedditError",
+    "RedditHandler",
 )
 
 T = TypeVar("T")
@@ -37,9 +37,9 @@ class RedditConfig(TypedDict):
 
 class _RedditSecretHandler:
     __slots__ = (
-        "token",
-        "expires",
         "_scopes",
+        "expires",
+        "token",
     )
 
     def __init__(self, token: str, expires: int, scopes: str) -> None:
@@ -65,9 +65,9 @@ class _RedditSecretHandler:
 class RedditHandler:
     __slots__ = (
         "__handler",
-        "session",
         "config",
         "headers",
+        "session",
     )
 
     def __init__(self, *, session: aiohttp.ClientSession, config: RedditConfig) -> None:
