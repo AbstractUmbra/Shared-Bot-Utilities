@@ -16,9 +16,9 @@ from discord.utils import MISSING
 
 __all__: tuple[str, ...] = (
     "BaseCog",
+    "Request",
     "WebserverCog",
     "route",
-    "Request",
 )
 
 FuncT = TypeVar("FuncT", bound="Callable[..., Any]")

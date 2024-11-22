@@ -23,9 +23,9 @@ __all__ = (
 
 class MaybeAcquire:
     __slots__ = (
-        "pool",
         "_cleanup",
         "_connection",
+        "pool",
     )
 
     def __init__(self, connection: asyncpg.Connection[asyncpg.Record] | None, *, pool: asyncpg.Pool[asyncpg.Record]) -> None:

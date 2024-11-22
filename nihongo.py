@@ -20,9 +20,9 @@ if TYPE_CHECKING:
     )
 
 __all__ = (
+    "JishoWord",
     "KanjiDevKanji",
     "KanjiDevWords",
-    "JishoWord",
 )
 
 

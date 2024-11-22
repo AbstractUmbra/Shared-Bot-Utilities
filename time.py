@@ -330,7 +330,7 @@ def human_timedelta(
 
 
 def ordinal(number: int) -> str:
-    return f"{number}{'tsnrhtdd'[(number//10%10!=1)*(number%10<4)*number%10::4]}"
+    return f"{number}{'tsnrhtdd'[(number // 10 % 10 != 1) * (number % 10 < 4) * number % 10 :: 4]}"
 
 
 def hf_time(dt: datetime.datetime, *, with_time: bool = True) -> str:
@@ -352,10 +352,8 @@ def resolve_next_weekday(
 
     if weekday == target.value:
         if (
-            current_week_included
-            and (before_time and source.time().replace(tzinfo=before_time.tzinfo) < before_time)
-            or not before_time
-        ):
+            current_week_included and (before_time and source.time().replace(tzinfo=before_time.tzinfo) < before_time)
+        ) or not before_time:
             return source
         return source + datetime.timedelta(days=7)
 

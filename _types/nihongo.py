@@ -1,11 +1,11 @@
 from typing import Literal, TypedDict
 
 __all__ = (
-    "KanjiDevKanjiPayload",
-    "KanjiDevWordsPayload",
-    "KanjiDevReadingPayload",
     "JishoWordsPayload",
     "JishoWordsResponse",
+    "KanjiDevKanjiPayload",
+    "KanjiDevReadingPayload",
+    "KanjiDevWordsPayload",
 )
 
 
