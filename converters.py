@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
     from typing import NotRequired, Self
 
-    from ..context import Context, GuildContext, Interaction
+    from utilities.context import Context, GuildContext, Interaction
 
 MYSTBIN_REGEX = re.compile(r"(?:(?:https?://)?(?:beta\.)?(?:mystb\.in\/))?(?P<id>(?:[A-Z]{1}[a-z]+)*)(?P<ext>\.\w+)?")
 LOGGER = logging.getLogger(__name__)
@@ -87,8 +87,8 @@ class RedditMediaURL:
     async def convert(cls: type[Self], ctx: Context, argument: str) -> Self:
         try:
             url = yarl.URL(argument)
-        except Exception:
-            raise commands.BadArgument("Not a valid URL.")
+        except TypeError as err:
+            raise commands.BadArgument("Not a valid URL.") from err
 
         headers = {"User-Agent": "Discord:mipha:v1.0 (by /u/AbstractUmbra)"}
         await ctx.typing()
@@ -107,13 +107,14 @@ class RedditMediaURL:
         # Now we go the long way
         async with ctx.session.get(url / ".json", headers=headers) as resp:
             if resp.status != 200:
-                raise commands.BadArgument(f"Reddit API failed with {resp.status}.")
+                msg = f"Reddit API failed with {resp.status}."
+                raise commands.BadArgument(msg)
 
             data = await resp.json()
             try:
                 submission = data[0]["data"]["children"][0]["data"]
-            except (KeyError, TypeError, IndexError):
-                raise commands.BadArgument("Could not fetch submission.")
+            except (KeyError, TypeError, IndexError) as err:
+                raise commands.BadArgument("Could not fetch submission.") from err
 
             try:
                 media = submission["media"]["reddit_video"]
@@ -122,13 +123,13 @@ class RedditMediaURL:
                     # maybe it's a cross post
                     crosspost = submission["crosspost_parent_list"][0]
                     media = crosspost["media"]["reddit_video"]
-                except (KeyError, TypeError, IndexError):
-                    raise commands.BadArgument("Could not fetch media information.")
+                except (KeyError, TypeError, IndexError) as err:
+                    raise commands.BadArgument("Could not fetch media information.") from err
 
             try:
                 fallback_url = yarl.URL(media["fallback_url"])
-            except KeyError:
-                raise commands.BadArgument("Could not fetch fall back URL.")
+            except KeyError as err:
+                raise commands.BadArgument("Could not fetch fall back URL.") from err
 
             return cls(fallback_url)
 
@@ -137,9 +138,7 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
     @staticmethod
     async def get_timezone(ctx: Context) -> zoneinfo.ZoneInfo | None:
         row: str | None = await ctx.bot.pool.fetchval("SELECT tz FROM tz_store WHERE user_id = $1;", ctx.author.id)
-        tz = zoneinfo.ZoneInfo(row) if row else zoneinfo.ZoneInfo("UTC")
-
-        return tz
+        return zoneinfo.ZoneInfo(row) if row else zoneinfo.ZoneInfo("UTC")
 
     @classmethod
     async def parse(
@@ -208,7 +207,7 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
 
         if len(parsed_times) == 0:
             raise commands.BadArgument("Could not parse time.")
-        elif len(parsed_times) > 1:
+        if len(parsed_times) > 1:
             ...  # TODO: Raise on too many?
 
         return parsed_times[0][0]
@@ -227,8 +226,7 @@ class WhenAndWhatConverter(commands.Converter[tuple[datetime.datetime, str]]):
                 break
 
         for suffix in ("from now",):
-            if argument.endswith(suffix):
-                argument = argument[: -len(suffix)]
+            argument = argument.removesuffix(suffix)
 
         argument = argument.strip()
 
@@ -254,7 +252,7 @@ class WhenAndWhatConverter(commands.Converter[tuple[datetime.datetime, str]]):
 
         if len(parsed_times) == 0:
             raise commands.BadArgument("Could not parse time.")
-        elif len(parsed_times) > 1:
+        if len(parsed_times) > 1:
             ...  # TODO: Raise on too many?
 
         when, begin, end = parsed_times[0]
@@ -268,8 +266,7 @@ class WhenAndWhatConverter(commands.Converter[tuple[datetime.datetime, str]]):
         what = argument[end + 1 :].lstrip(" ,.!:;") if begin == 0 else argument[:begin].strip()
 
         for prefix in ("to ",):
-            if what.startswith(prefix):
-                what = what[len(prefix) :]
+            what = what.removeprefix(prefix)
 
         return (when, what or "…")
 
@@ -285,9 +282,7 @@ class DatetimeTransformer(app_commands.Transformer):
             "SELECT tz FROM tz_store WHERE user_id = $1;",
             interaction.user.id,
         )
-        tz = zoneinfo.ZoneInfo(row) if row else zoneinfo.ZoneInfo("UTC")
-
-        return tz
+        return zoneinfo.ZoneInfo(row) if row else zoneinfo.ZoneInfo("UTC")
 
     @classmethod
     async def parse(
@@ -362,7 +357,7 @@ class DatetimeTransformer(app_commands.Transformer):
 
         if len(parsed_times) == 0:
             raise BadDatetimeTransform("Could not parse time.")
-        elif len(parsed_times) > 1:
+        if len(parsed_times) > 1:
             ...  # TODO: Raise on too many?
 
         return parsed_times[0][0]
@@ -381,13 +376,7 @@ class DatetimeTransformer(app_commands.Transformer):
             port=duckling_key["port"],
             path="/parse",
         )
-
-        # implement caching
-        # if interaction.user.id in cache:
-        #   tz = cache[interaction.user.id]
-        # else:
         tz = await self.get_timezone(interaction)
-        #   cache[interaction.user.id] = tz
 
         now = interaction.created_at.astimezone(tz=tz)
         parsed_times = await self.parse(
@@ -414,8 +403,7 @@ class WhenAndWhatTransformer(DatetimeTransformer):
                 break
 
         for suffix in ("from now",):
-            if value.endswith(suffix):
-                value = value[: -len(suffix)]
+            value = value.removesuffix(suffix)
 
         value = value.strip()
 
@@ -440,7 +428,7 @@ class WhenAndWhatTransformer(DatetimeTransformer):
 
         if len(parsed_times) == 0:
             raise BadDatetimeTransform("Could not parse time.")
-        elif len(parsed_times) > 1:
+        if len(parsed_times) > 1:
             ...  # TODO: Raise on too many?
 
         when, begin, end = parsed_times[0]
@@ -454,8 +442,7 @@ class WhenAndWhatTransformer(DatetimeTransformer):
         what = value[end + 1 :].lstrip(" ,.!:;") if begin == 0 else value[:begin].strip()
 
         for prefix in ("to ",):
-            if what.startswith(prefix):
-                what = what[len(prefix) :]
+            what = what.removeprefix(prefix)
 
         return when
 
@@ -470,11 +457,13 @@ class Snowflake:
     async def convert(cls, ctx: Context, argument: str) -> int:
         try:
             return int(argument)
-        except ValueError:
+        except ValueError as err:
             param = ctx.current_parameter
             if param:
-                raise commands.BadArgument(f"{param.name} argument expected a Discord ID not {argument!r}")
-            raise commands.BadArgument(f"expected a Discord ID not {argument!r}")
+                msg = f"{param.name} argument expected a Discord ID not {argument!r}"
+                raise commands.BadArgument(msg) from err
+            msg = f"expected a Discord ID not {argument!r}"
+            raise commands.BadArgument(msg) from err
 
 
 class MystbinPasteConverter(commands.Converter[str]):
@@ -492,7 +481,8 @@ class WebhookTransformer(app_commands.Transformer):
             wh = Webhook.from_url(value, client=interaction.client, session=interaction.client.session)
         except ValueError as err:
             await interaction.response.send_message(
-                "Sorry but the provided webhook url is invalid. Perhaps a typo?", ephemeral=True
+                "Sorry but the provided webhook url is invalid. Perhaps a typo?",
+                ephemeral=True,
             )
             raise ValueError from err
 

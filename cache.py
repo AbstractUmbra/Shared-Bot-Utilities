@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import enum
+import operator
 import time
 from functools import wraps
 from typing import (
@@ -23,7 +24,7 @@ from typing import (
 from lru import LRU
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Coroutine, MutableMapping
+    from collections.abc import Callable, Coroutine, Generator, MutableMapping
 
 R = TypeVar("R")
 
@@ -74,10 +75,10 @@ class ExpiringCache(dict, Generic[R]):
         super().__setitem__(key, (value, time.monotonic()))
 
     def values(self) -> map[R]:
-        return map(lambda x: x[0], super().values())  # noqa: C417
+        return map(operator.itemgetter(0), super().values())
 
-    def items(self) -> map[tuple[float, R]]:
-        return map(lambda x: (x[0], x[1][0]), super().items())  # noqa: C417
+    def items(self) -> Generator[tuple[float, R], None, None]:
+        return ((x[0], x[1][0]) for x in super().items())
 
 
 class Strategy(enum.Enum):
@@ -89,6 +90,7 @@ class Strategy(enum.Enum):
 def cache(
     maxsize: int = 128,
     strategy: Strategy = Strategy.lru,
+    *,
     ignore_kwargs: bool = False,
 ) -> Callable[[Callable[..., Coroutine[Any, Any, R]]], CacheProtocol[R]]:
     def decorator(func: Callable[..., Coroutine[Any, Any, R]]) -> CacheProtocol[R]:
@@ -97,10 +99,15 @@ def cache(
             _stats = _internal_cache.get_stats
         elif strategy is Strategy.raw:
             _internal_cache = {}
-            _stats = lambda: (0, 0)
+
+            def _stats() -> tuple[int, int]:
+                return 0, 0
+
         elif strategy is Strategy.timed:
             _internal_cache = ExpiringCache(maxsize)
-            _stats = lambda: (0, 0)
+
+            def _stats() -> tuple[int, int]:
+                return 0, 0
 
         def _make_key(args: tuple[Any, ...], kwargs: dict[str, Any]) -> str:
             # this is a bit of a cluster fuck
@@ -121,8 +128,7 @@ def cache(
                     if k == "connection" or k == "pool":
                         continue
 
-                    key.append(_true_repr(k))
-                    key.append(_true_repr(v))
+                    key.extend((_true_repr(k), _true_repr(v)))
 
             return ":".join(key)
 
@@ -153,11 +159,11 @@ def cache(
                 except KeyError:
                     continue
 
-        wrapper.cache = _internal_cache  # type: ignore
-        wrapper.get_key = lambda *args, **kwargs: _make_key(args, kwargs)  # type: ignore
-        wrapper.invalidate = _invalidate  # type: ignore
-        wrapper.get_stats = _stats  # type: ignore
-        wrapper.invalidate_containing = _invalidate_containing  # type: ignore
-        return wrapper  # type: ignore
+        wrapper.cache = _internal_cache  # pyright: ignore[reportAttributeAccessIssue]
+        wrapper.get_key = lambda *args, **kwargs: _make_key(args, kwargs)  # pyright: ignore[reportAttributeAccessIssue]
+        wrapper.invalidate = _invalidate  # pyright: ignore[reportAttributeAccessIssue]
+        wrapper.get_stats = _stats  # pyright: ignore[reportAttributeAccessIssue]
+        wrapper.invalidate_containing = _invalidate_containing  # pyright: ignore[reportAttributeAccessIssue]
+        return wrapper  # pyright: ignore[reportReturnType]
 
     return decorator

@@ -36,12 +36,12 @@ class MaybeAcquire:
     async def __aenter__(self) -> asyncpg.Connection[asyncpg.Record]:
         if self._connection is None:
             self._cleanup = True
-            self._connection = await self.pool.acquire()  # type: ignore # navigating stubs
-        return self._connection  # type: ignore # navigating stubs
+            self._connection = await self.pool.acquire()  # pyright: ignore[reportAttributeAccessIssue] # navigating stubs
+        return self._connection  # pyright: ignore[reportReturnType] # navigating stubs
 
-    async def __aexit__(self, *args: Any) -> None:
+    async def __aexit__(self, *args: object) -> None:
         if self._cleanup:
-            await self.pool.release(self._connection)  # type: ignore # navigating stubs
+            await self.pool.release(self._connection)  # pyright: ignore[reportArgumentType] # navigating stubs
 
 
 def _encode_jsonb(value: Any) -> str:

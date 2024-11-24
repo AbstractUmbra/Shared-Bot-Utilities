@@ -16,7 +16,9 @@ async def create_paste(
     mb_client: mystbin.Client,
 ) -> str:
     paste = await mb_client.create_paste(
-        files=[mystbin.File(filename="output.py", content=content)], expires=expiry, password=password
+        files=[mystbin.File(filename="output.py", content=content)],
+        expires=expiry,
+        password=password,
     )
 
     return paste.url

@@ -18,8 +18,7 @@ if TYPE_CHECKING:
     from typing import Self
 
     from extensions.stats import Stats
-
-    from ..context import Interaction
+    from utilities.context import Interaction
 
 __all__ = ("BaseModal", "BaseView", "ConfirmationView")
 
@@ -39,7 +38,10 @@ class BaseModal(discord.ui.Modal):
         e.add_field(name="Error", value=f"```py\n{trace}\n```")
         e.timestamp = datetime.datetime.now(datetime.UTC)
 
-        stats: Stats = interaction.client.get_cog("Stats")  # type: ignore
+        stats: Stats | None = interaction.client.get_cog("Stats")  # pyright: ignore[reportAssignmentType] # type downcasting
+        if not stats:
+            return
+
         try:
             await stats.webhook.send(embed=e)
         except discord.HTTPException:
@@ -70,8 +72,15 @@ class BaseView(discord.ui.View):
         embed = discord.Embed(title=f"{view_name} View Error", colour=0xA32952)
         embed.add_field(name="Author", value=interaction.user, inline=False)
         channel = interaction.channel
+        assert channel
+
+        name, id_ = (
+            (channel.name, channel.id)
+            if isinstance(channel, discord.TextChannel)
+            else (f"DMs with {interaction.user} ({interaction.user.id})", channel.id)
+        )
         guild = interaction.guild
-        location_fmt = f"Channel: {channel.name} ({channel.id})"  # type: ignore
+        location_fmt = f"Channel: {name} ({id_})"
 
         if guild:
             location_fmt += f"\nGuild: {guild.name} ({guild.id})"

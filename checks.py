@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
     from discord.ext.commands._types import Check
 
-    from ..context import Context, GuildContext, Interaction
+    from utilities.context import Context, GuildContext, Interaction
 
 
 T = TypeVar("T")

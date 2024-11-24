@@ -49,9 +49,9 @@ class ts:
     def __init__(self, value: datetime.datetime) -> None:
         self.value: datetime.datetime = value
 
-    def __format__(self, __format_spec: str) -> str:
+    def __format__(self, __format_spec: str) -> str:  # noqa: PYI063 # required to be a compatible override
         spec, _, _ = __format_spec.partition("|")
-        return discord.utils.format_dt(self.value, style=spec)  # type: ignore
+        return discord.utils.format_dt(self.value, style=spec)  # pyright: ignore[reportArgumentType] literal downcasting
 
 
 def human_join(seq: Sequence[str], delim: str = ", ", final: str = "or") -> str:
@@ -122,9 +122,10 @@ class TabularData:
 def to_codeblock(
     content: str,
     language: str = "py",
+    new: str = "'''",
+    *,
     replace_existing: bool = True,
     escape_md: bool = True,
-    new: str = "'''",
 ) -> str:
     if replace_existing:
         content = content.replace("```", new)
@@ -146,7 +147,7 @@ def escape_invis(decode_error: UnicodeDecodeError | UnicodeEncodeError) -> tuple
     )
 
 
-codecs.register_error("escape-invis", escape_invis)  # type: ignore
+codecs.register_error("escape-invis", escape_invis)  # pyright: ignore[reportArgumentType] # this is seemingly allowed but the types are wrong
 
 
 def escape_invis_chars(content: str) -> str:
@@ -227,12 +228,12 @@ else:
     def to_json(obj: Any) -> str:
         return orjson.dumps(obj, option=orjson.OPT_INDENT_2 | orjson.OPT_SORT_KEYS).decode()
 
-    def from_json(obj: str) -> Any:  # pyright: ignore[reportRedeclaration] # this is fine
+    def from_json(obj: str) -> Any:  # pyright: ignore[reportRedeclaration] # in a context with no orjson
         return orjson.loads(obj)
 
 
 def random_pastel_colour() -> discord.Colour:
-    return discord.Colour.from_hsv(random.random(), 0.28, 0.97)
+    return discord.Colour.from_hsv(random.random(), 0.28, 0.97)  # noqa: S311 # not crypto
 
 
 def find_nth_occurrence(string: str, substring: str, n: int) -> int | None:

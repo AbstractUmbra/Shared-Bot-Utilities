@@ -135,12 +135,11 @@ class RoboPages(BaseView):
         value = await discord.utils.maybe_coroutine(self.source.format_page, self, page)
         if isinstance(value, dict):
             return value
-        elif isinstance(value, str):
+        if isinstance(value, str):
             return {"content": value, "embed": None}
-        elif isinstance(value, discord.Embed):
+        if isinstance(value, discord.Embed):
             return {"embed": value, "content": None}
-        else:
-            return {}
+        return {}
 
     async def show_page(self, interaction: Interaction, page_number: int) -> None:
         page = await self.source.get_page(page_number)
@@ -209,7 +208,7 @@ class RoboPages(BaseView):
             await interaction.response.send_message("An unknown error occurred, sorry", ephemeral=True)
 
     async def start(self, *, content: str | None = None, ephemeral: bool = False) -> None:
-        if self.check_embeds and not self.ctx.channel.permissions_for(self.ctx.me).embed_links:  # type: ignore
+        if self.check_embeds and not self.ctx.channel.permissions_for(self.ctx.me).embed_links:  # pyright: ignore[reportArgumentType] # guarded earlier
             await self.ctx.send("Bot does not have embed links permission in this channel.", ephemeral=True)
             return
 
@@ -245,7 +244,7 @@ class RoboPages(BaseView):
     async def go_to_last_page(self, interaction: Interaction, button: discord.ui.Button) -> None:
         """go to the last page"""
         # The call here is safe because it's guarded by skip_if
-        await self.show_page(interaction, self.source.get_max_pages() - 1)  # type: ignore
+        await self.show_page(interaction, self.source.get_max_pages() - 1)  # pyright: ignore[reportOperatorIssue] # PageSource isn't an ABC when it should be
 
     @discord.ui.button(label="Skip to page...", style=discord.ButtonStyle.grey)
     async def numbered_page(self, interaction: Interaction, button: discord.ui.Button) -> None:
@@ -260,7 +259,7 @@ class RoboPages(BaseView):
         if timed_out:
             await interaction.followup.send("Took too long", ephemeral=True)
             return
-        elif self.is_finished():
+        if self.is_finished():
             await modal.interaction.response.send_message("Took too long", ephemeral=True)
             return
 
@@ -272,7 +271,7 @@ class RoboPages(BaseView):
         value = int(value)
         await self.show_checked_page(modal.interaction, value - 1)
         if not modal.interaction.response.is_done():
-            error = modal.page.placeholder.replace("Enter", "Expected")  # type: ignore # Can't be None
+            error = modal.page.placeholder.replace("Enter", "Expected")  # pyright: ignore[reportOptionalMemberAccess] # Won't ever be none here
             await modal.interaction.response.send_message(error, ephemeral=True)
 
     @discord.ui.button(label="Quit", style=discord.ButtonStyle.red)
@@ -479,15 +478,18 @@ class _LinePaginator(CommandPaginator):
         # Embeds that exceed 4096 characters will result in an HTTPException
         # (Discord API limit), so we've set a limit of 4000
         if max_size > 4000:
-            raise ValueError(f"max_size must be <= 4,000 characters. ({max_size} > 4000)")
+            msg = f"max_size must be <= 4,000 characters. ({max_size} > 4000)"
+            raise ValueError(msg)
 
         super().__init__(prefix, suffix, max_size - len(suffix), linesep)
 
         if scale_to_size < max_size:
-            raise ValueError(f"scale_to_size must be >= max_size. ({scale_to_size} < {max_size})")
+            msg = f"scale_to_size must be >= max_size. ({scale_to_size} < {max_size})"
+            raise ValueError(msg)
 
         if scale_to_size > 4000:
-            raise ValueError(f"scale_to_size must be <= 4,000 characters. ({scale_to_size} > 4000)")
+            msg = f"scale_to_size must be <= 4,000 characters. ({scale_to_size} > 4000)"
+            raise ValueError(msg)
 
         self.scale_to_size = scale_to_size - len(suffix)
         self.max_lines = max_lines
@@ -610,6 +612,7 @@ class _LinePaginator(CommandPaginator):
     @classmethod
     async def paginate(
         cls,
+        *,
         lines: list[str],
         ctx: Context | discord.Interaction,
         embed: discord.Embed,
@@ -706,7 +709,7 @@ class _LinePaginator(CommandPaginator):
 
             if isinstance(ctx, discord.Interaction):
                 return await ctx.response.send_message(embed=embed)
-            return await ctx.send(embed=embed, reference=reference)
+            return await ctx.send(embeds=[embed], reference=reference)
 
         if footer_text:
             embed.set_footer(text=f"{footer_text} (Page {current_page + 1}/{len(paginator.pages)})")
@@ -724,7 +727,8 @@ class _LinePaginator(CommandPaginator):
             await ctx.response.send_message(embed=embed)
             message = await ctx.original_response()
         else:
-            message = await ctx.send(embed=embed, reference=reference, wait=True)
+            message = await ctx.send(embeds=[embed], reference=reference, wait=True)
+            assert message
 
         LOGGER.debug("Adding emoji reactions to message...")
 
@@ -764,7 +768,7 @@ class _LinePaginator(CommandPaginator):
                 except discord.HTTPException as e:
                     # Suppress if trying to act on an archived thread.
                     if e.code != 50083:
-                        raise e
+                        raise
 
                 if reaction.emoji == PaginationEmojis.first:
                     current_page = 0
@@ -800,7 +804,7 @@ class _LinePaginator(CommandPaginator):
                     if e.code == 50083:
                         # Trying to act on an archived thread, just ignore and abort
                         break
-                    raise e
+                    raise
 
         LOGGER.debug("Ending pagination and clearing reactions.")
         with suppress(discord.NotFound):
@@ -809,7 +813,7 @@ class _LinePaginator(CommandPaginator):
             except discord.HTTPException as e:
                 # Suppress if trying to act on an archived thread.
                 if e.code != 50083:
-                    raise e
+                    raise
 
 
 class LinePaginator(_LinePaginator):
@@ -822,6 +826,7 @@ class LinePaginator(_LinePaginator):
     @classmethod
     async def paginate(
         cls,
+        *,
         lines: list[str],
         ctx: Context | discord.Interaction,
         embed: discord.Embed,

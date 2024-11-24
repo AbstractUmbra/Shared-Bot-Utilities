@@ -11,6 +11,7 @@ This file was sourced from [RoboDanny](https://github.com/Rapptz/RoboDanny).
 from __future__ import annotations
 
 import heapq
+import operator
 import re
 from difflib import SequenceMatcher
 from typing import TYPE_CHECKING, Literal, TypeVar, overload
@@ -144,7 +145,8 @@ def extract(
     limit: int | None = 10,
 ) -> list[tuple[str, int]] | list[tuple[str, int, T]]:
     it = _extraction_generator(query, choices, scorer, score_cutoff)
-    key = lambda t: t[1]
+    key = operator.itemgetter(1)
+
     if limit is not None:
         return heapq.nlargest(limit, it, key=key)
     return sorted(it, key=key, reverse=True)
@@ -178,10 +180,10 @@ def extract_one(
     score_cutoff: int = 0,
 ) -> tuple[str, int] | tuple[str, int, T] | None:
     it = _extraction_generator(query, choices, scorer, score_cutoff)
-    key = lambda t: t[1]
+
     try:
-        return max(it, key=key)
-    except:
+        return max(it, key=operator.itemgetter(1))
+    except ValueError:
         # iterator could return nothing
         return None
 
@@ -336,8 +338,7 @@ def finder(
 
     if raw:
         return sorted(suggestions, key=sort_key)
-    else:
-        return [z for _, _, z in sorted(suggestions, key=sort_key)]
+    return [z for _, _, z in sorted(suggestions, key=sort_key)]
 
 
 def find(text: str, collection: Iterable[str], *, key: Callable[[str], str] | None = None) -> str | None:

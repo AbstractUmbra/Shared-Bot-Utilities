@@ -189,12 +189,12 @@ class Scheduler:
         elif scheduled_task:
             # A new task was likely rescheduled with the same ID.
             self._log.debug(
-                f"The scheduled task #{task_id} {id(scheduled_task)} " f"and the done task {id(done_task)} differ."
+                f"The scheduled task #{task_id} {id(scheduled_task)} and the done task {id(done_task)} differ.",
             )
         elif not done_task.cancelled():
             self._log.warning(
                 f"Task #{task_id} not found while handling task {id(done_task)}! "
-                f"A task somehow got unscheduled improperly (i.e. deleted but not cancelled)."
+                f"A task somehow got unscheduled improperly (i.e. deleted but not cancelled).",
             )
 
         with contextlib.suppress(asyncio.CancelledError):
@@ -237,7 +237,7 @@ def create_task(
     _background_tasks.add(task)
     task.add_done_callback(_background_tasks.discard)
     task.add_done_callback(partial(_log_task_exception, suppressed_exceptions=suppressed_exceptions))
-    return task  # type: ignore
+    return task  # pyright: ignore[reportReturnType] # weird case
 
 
 async def _coro_wrapper(coro: Coroutine[Any, Any, TASK_RETURN]) -> None:

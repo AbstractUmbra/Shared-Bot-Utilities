@@ -30,7 +30,7 @@ class LockedResourceError(RuntimeError):
         self.id = resource_id
 
         super().__init__(
-            f"Cannot operate on {self.type.lower()} `{self.id}`; " "it is currently locked and in use by another operation."
+            f"Cannot operate on {self.type.lower()} `{self.id}`; it is currently locked and in use by another operation.",
         )
 
 
@@ -105,5 +105,6 @@ async def handle_forbidden_from_block(error: Forbidden, message: Message | None 
             message.author.id,
         )
         await message.channel.send(
-            f":x: {message.author.mention} failed to add reaction(s) to your message as you've blocked me.", delete_after=30
+            f":x: {message.author.mention} failed to add reaction(s) to your message as you've blocked me.",
+            delete_after=30,
         )

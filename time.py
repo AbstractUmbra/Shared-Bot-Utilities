@@ -20,7 +20,7 @@ from discord.ext import commands
 from .formats import human_join, plural
 
 if TYPE_CHECKING:
-    from ..context import Context
+    from utilities.context import Context
 
 # Monkey patch mins and secs into the units
 units = pdt.pdtLocales["en_US"].units
@@ -59,8 +59,8 @@ class ShortTime:
             raise commands.BadArgument("invalid time provided")
 
         data = {k: int(v) for k, v in match.groupdict(default=0).items()}
-        now = now or datetime.datetime.utcnow().replace(tzinfo=datetime.UTC)
-        self.dt = now + relativedelta(**data)  # type: ignore # pyright dict expansion sadness
+        now = now or datetime.datetime.now(datetime.UTC)
+        self.dt = now + relativedelta(**data)  # pyright: ignore[reportArgumentType] # untypable dict
 
     @classmethod
     async def convert(cls, ctx: Context, argument: str) -> ShortTime:
@@ -72,7 +72,7 @@ class HumanTime:
     calendar = pdt.Calendar(version=pdt.VERSION_CONTEXT_STYLE)
 
     def __init__(self, argument: str, *, now: datetime.datetime | None = None) -> None:
-        now = now or datetime.datetime.utcnow().replace(tzinfo=datetime.UTC)
+        now = now or datetime.datetime.now(datetime.UTC)
         dt, status = self.calendar.parseDT(argument, sourceTime=now)
         assert isinstance(status, pdt.pdtContext)
         if not status.hasDateOrTime:
@@ -102,7 +102,7 @@ class Time(HumanTime):
     def __init__(self, argument: str, *, now: datetime.datetime | None = None) -> None:
         try:
             o = ShortTime(argument, now=now)
-        except Exception:
+        except (commands.BadArgument, ValueError):
             super().__init__(argument)
         else:
             self.dt = o.dt
@@ -178,7 +178,7 @@ class UserFriendlyTime(commands.Converter):
             if match is not None and match.group(0):
                 data = {k: int(v) for k, v in match.groupdict(default=0).items()}
                 remaining = argument[match.end() :].strip()
-                result.dt = now + relativedelta(**data)  # type: ignore # pyright dict expansion sadness
+                result.dt = now + relativedelta(**data)  # pyright: ignore[reportArgumentType] # untypable dict
                 return await result.check_constraints(ctx, now, remaining)
 
             # apparently nlp does not like "from now"
@@ -186,11 +186,11 @@ class UserFriendlyTime(commands.Converter):
             if argument.endswith("from now"):
                 argument = argument[:-8].strip()
 
-            if argument[0:2] == "me" and argument[0:6] in (
+            if argument[0:2] == "me" and argument[0:6] in {
                 "me to ",
                 "me in ",
                 "me at ",
-            ):
+            }:
                 # starts with "me to", "me in", or "me at "
                 argument = argument[6:]
 
@@ -235,7 +235,7 @@ class UserFriendlyTime(commands.Converter):
 
             result.dt = dt.replace(tzinfo=datetime.UTC)
 
-            if begin in (0, 1):
+            if begin in {0, 1}:
                 if begin == 1:
                     # check if it's quoted:
                     if argument[0] != '"':
@@ -364,7 +364,10 @@ def resolve_next_weekday(
 
 
 def resolve_previous_weekday(
-    *, target: Weekday, source: datetime.datetime | None = None, current_week_included: bool = False
+    *,
+    target: Weekday,
+    source: datetime.datetime | None = None,
+    current_week_included: bool = False,
 ) -> datetime.datetime:
     source = source or datetime.datetime.now(datetime.UTC)
     weekday = source.weekday()

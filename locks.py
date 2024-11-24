@@ -46,7 +46,10 @@ class SharedEvent:
         self._event.clear()
 
     def __exit__(
-        self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> None:
         """Decrement the count of the active holders; if 0 is reached set the internal event."""
         self._active_count -= 1

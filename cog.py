@@ -73,7 +73,6 @@ class _BaseWebserver:
         self.logger.debug("Starting %s webserver.", self.__class__.__name__)
         self._webserver = web.TCPSite(self._runner, host=host, port=port)
         await self._webserver.start()
-        self._webserver.start
 
     async def close(self) -> None:
         self.logger.debug("Cleaning up after %s.", self.__class__.__name__)
@@ -127,13 +126,9 @@ class WebserverCog(BaseCog[BotT], _BaseWebserver):
         return super().__init_subclass__()
 
     async def cog_load(self) -> None:
-        try:
-            await self.start(host=self.__runner_host__, port=self.__runner_port__)
-        finally:
-            return await super().cog_load()
+        await self.start(host=self.__runner_host__, port=self.__runner_port__)
+        return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        try:
-            await self.close()
-        finally:
-            return await super().cog_unload()
+        await self.close()
+        return await super().cog_unload()

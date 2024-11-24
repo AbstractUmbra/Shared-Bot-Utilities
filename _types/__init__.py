@@ -7,4 +7,4 @@ from .scotrail import *
 from .sonarr import *
 from .synth import *
 from .uploader import *
-from .xiv.reddit.kaiyoko import *
+from .xiv import *

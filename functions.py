@@ -39,15 +39,19 @@ def get_arg_value(name_or_pos: Argument, arguments: BoundArgs) -> Any:
 
         try:
             _, value = arg_values[arg_pos]
+        except IndexError as err:
+            msg = f"Argument position {arg_pos} is out of bounds."
+            raise ValueError(msg) from err
+        else:
             return value
-        except IndexError:
-            raise ValueError(f"Argument position {arg_pos} is out of bounds.")
+
     elif isinstance(name_or_pos, str):
         arg_name = name_or_pos
         try:
             return arguments[arg_name]
-        except KeyError:
-            raise ValueError(f"Argument {arg_name!r} doesn't exist.")
+        except KeyError as err:
+            msg = f"Argument {arg_name!r} doesn't exist."
+            raise ValueError(msg) from err
     else:
         raise TypeError("'arg' must either be an int (positional index) or a str (keyword).")
 
@@ -117,11 +121,12 @@ def update_wrapper_globals(
     shared_globals = set(wrapper.__code__.co_names) & set(annotation_global_names)
     shared_globals &= set(wrapped.__globals__) & set(wrapper.__globals__) - ignored_conflict_names
     if shared_globals:
-        raise GlobalNameConflictError(
+        msg = (
             f"wrapper and the wrapped function share the following "
             f"global names used by annotations: {', '.join(shared_globals)}. Resolve the conflicts or add "
             f"the name to the `ignored_conflict_names` set to suppress this error if this is intentional."
         )
+        raise GlobalNameConflictError(msg)
 
     new_globals = wrapper.__globals__.copy()
     new_globals.update((k, v) for k, v in wrapped.__globals__.items() if k not in wrapper.__code__.co_names)
@@ -131,7 +136,7 @@ def update_wrapper_globals(
         name=wrapper.__name__,
         argdefs=wrapper.__defaults__,
         closure=wrapper.__closure__,
-    )  # pyright: ignore[reportReturnType] # it is valid but casting is pain
+    )
 
 
 def command_wraps(

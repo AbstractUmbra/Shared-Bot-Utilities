@@ -117,7 +117,9 @@ class RedditHandler:
             response: PasswordAuth = await resp.json()
 
         self.__handler = _RedditSecretHandler(
-            response["access_token"], expires=response["expires_in"], scopes=response["scope"]
+            response["access_token"],
+            expires=response["expires_in"],
+            scopes=response["scope"],
         )
         return self
 
