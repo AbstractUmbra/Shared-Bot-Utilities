@@ -414,15 +414,15 @@ if HAS_HONDANA:
             if manga.tags:
                 self.add_field(name="Tags:", value=", ".join([tag.name for tag in manga.tags]), inline=False)
             if manga.publication_demographic:
-                self.add_field(name="Publication Demographic:", value=str(manga.publication_demographic).title())
+                self.add_field(name="Publication Demographic:", value=manga.publication_demographic.value.title())
             if manga.content_rating:
-                self.add_field(name="Content Rating:", value=str(manga.content_rating).title(), inline=False)
+                self.add_field(name="Content Rating:", value=manga.content_rating.value.title(), inline=False)
             if manga.artists:
                 self.add_field(name="Attributed Artists:", value=", ".join([artist.name for artist in manga.artists]))
             if manga.authors:
                 self.add_field(name="Attributed Authors:", value=", ".join([artist.name for artist in manga.authors]))
             if manga.status:
-                self.add_field(name="Publication status:", value=str(manga.status).title(), inline=False)
+                self.add_field(name="Publication status:", value=manga.status.value.title(), inline=False)
                 if manga.status is hondana.MangaStatus.completed:  # pyright: ignore[reportUnboundVariable] # hondana may not be installed, we're covered
                     self.add_field(name="Last Volume:", value=manga.last_volume)
                     self.add_field(name="Last Chapter:", value=manga.last_chapter)
