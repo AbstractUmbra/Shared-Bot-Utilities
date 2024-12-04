@@ -8,6 +8,7 @@ This file was sourced from [RoboDanny](https://github.com/Rapptz/RoboDanny).
 
 from __future__ import annotations
 
+import collections
 import datetime
 import logging
 import re
@@ -68,7 +69,7 @@ class DucklingResponse(TypedDict):
     value: DucklingResponseValue
 
 
-class MemeDict(dict):
+class MemeDict(collections.UserDict):
     def __getitem__(self, k: Sequence[Any]) -> Any:
         for key in self:
             if k in key:
