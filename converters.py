@@ -15,9 +15,12 @@ import re
 import zoneinfo
 from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
+import discord
 import yarl
 from discord import Member, User, Webhook, app_commands
 from discord.ext import commands
+
+from utilities.context import Context
 
 from .time import hf_time
 
@@ -25,7 +28,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
     from typing import NotRequired, Self
 
-    from utilities.context import Context, GuildContext, Interaction
+    from utilities.context import GuildContext, Interaction
 
 MYSTBIN_REGEX = re.compile(r"(?:(?:https?://)?(?:beta\.)?(?:mystb\.in\/))?(?P<id>(?:[A-Z]{1}[a-z]+)*)(?P<ext>\.\w+)?")
 LOGGER = logging.getLogger(__name__)
@@ -40,6 +43,34 @@ __all__ = (
     "WhenAndWhatConverter",
     "WhenAndWhatTransformer",
 )
+
+
+def resolve_nsfwness(
+    messageable: discord.abc.Messageable | discord.CategoryChannel | discord.ForumChannel | None,
+    /,
+) -> bool:
+    if not messageable:
+        # passed None
+        return False
+
+    if isinstance(messageable, Context):
+        # resolve inner context
+        messageable = messageable.channel
+
+    if isinstance(messageable, (discord.User, discord.Member, discord.DMChannel, discord.GroupChannel)):
+        # DMs are okay
+        return True
+    if isinstance(
+        messageable,
+        (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.CategoryChannel, discord.ForumChannel),
+    ):
+        # use the channel attr
+        return messageable.nsfw
+    if isinstance(messageable, discord.Thread) and messageable.parent:
+        # Thread has a parent
+        return messageable.parent.nsfw
+
+    return False
 
 
 class DucklingNormalised(TypedDict):
