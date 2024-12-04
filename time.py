@@ -4,13 +4,14 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 This file was sourced from [RoboDanny](https://github.com/Rapptz/RoboDanny).
-"""
+"""  # noqa: A005 # accessed via namespace only
 
 from __future__ import annotations
 
 import datetime
 import enum
 import re
+import traceback
 from typing import TYPE_CHECKING
 
 import parsedatetime as pdt
@@ -256,8 +257,6 @@ class UserFriendlyTime(commands.Converter):
 
             return await result.check_constraints(ctx, now, remaining)
         except Exception:
-            import traceback
-
             traceback.print_exc()
             raise
 

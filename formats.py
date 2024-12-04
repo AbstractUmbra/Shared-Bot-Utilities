@@ -110,8 +110,7 @@ class TabularData:
             elem = "|".join(f"{e:^{self._widths[i]}}" for i, e in enumerate(d))
             return f"|{elem}|"
 
-        to_draw.append(get_entry(self._columns))
-        to_draw.append(sep)
+        to_draw.extend((get_entry(self._columns), sep))
 
         to_draw.extend(get_entry(row) for row in self._rows)
 
@@ -165,7 +164,7 @@ def clean_single_backtick(line: str) -> str:
     Clean backticks so we don't accidentally escape, and escape custom emojis
     that would be discordified.
     """
-    if re.search("[^`]`[^`]", line) is not None:
+    if re.search(r"[^`]`[^`]", line) is not None:
         return f"`{clean_double_backtick(line)}`"
     if line[:2] == "``":
         line = "\u200b" + line

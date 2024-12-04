@@ -1,4 +1,4 @@
-from __future__ import annotations
+from __future__ import annotations  # noqa: A005 # accessed via namespace only
 
 import asyncio
 from collections import OrderedDict, deque
