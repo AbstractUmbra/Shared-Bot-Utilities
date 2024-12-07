@@ -56,10 +56,9 @@ class MarkdownBuilder:
 
         return self
 
-    @after_markdown
     def add_subtitle(self, text: str, /) -> Self:
         lines = self._inner.split("\n")
-        lines.append(f"-# {text}")
+        lines.insert(-1, f"-# {text}")
         self._inner = "\n".join(lines)
 
         return self
