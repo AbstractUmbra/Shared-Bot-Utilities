@@ -95,16 +95,16 @@ def cache(
 ) -> Callable[[Callable[..., Coroutine[Any, Any, R]]], CacheProtocol[R]]:
     def decorator(func: Callable[..., Coroutine[Any, Any, R]]) -> CacheProtocol[R]:
         if strategy is Strategy.lru:
-            _internal_cache = LRU(maxsize)
-            _stats = _internal_cache.get_stats
+            internal_cache = LRU(maxsize)
+            _stats = internal_cache.get_stats
         elif strategy is Strategy.raw:
-            _internal_cache = {}
+            internal_cache = {}
 
             def _stats() -> tuple[int, int]:
                 return 0, 0
 
         elif strategy is Strategy.timed:
-            _internal_cache = ExpiringCache(maxsize)
+            internal_cache = ExpiringCache(maxsize)
 
             def _stats() -> tuple[int, int]:
                 return 0, 0
@@ -136,30 +136,30 @@ def cache(
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             key = _make_key(args, kwargs)
             try:
-                task = _internal_cache[key]
+                task = internal_cache[key]
             except KeyError:
-                _internal_cache[key] = task = asyncio.create_task(func(*args, **kwargs))
+                internal_cache[key] = task = asyncio.create_task(func(*args, **kwargs))
                 return task
             else:
                 return task
 
         def _invalidate(*args: Any, **kwargs: Any) -> bool:
             try:
-                del _internal_cache[_make_key(args, kwargs)]
+                del internal_cache[_make_key(args, kwargs)]
             except KeyError:
                 return False
             else:
                 return True
 
         def _invalidate_containing(key: str) -> None:
-            to_remove = [k for k in _internal_cache.keys() if key in k]  # noqa: SIM118, LRU ain't iterable
+            to_remove = [k for k in internal_cache.keys() if key in k]  # noqa: SIM118, LRU ain't iterable
             for k in to_remove:
                 try:
-                    del _internal_cache[k]
+                    del internal_cache[k]
                 except KeyError:
                     continue
 
-        wrapper.cache = _internal_cache  # pyright: ignore[reportAttributeAccessIssue]
+        wrapper.cache = internal_cache  # pyright: ignore[reportAttributeAccessIssue]
         wrapper.get_key = lambda *args, **kwargs: _make_key(args, kwargs)  # pyright: ignore[reportAttributeAccessIssue]
         wrapper.invalidate = _invalidate  # pyright: ignore[reportAttributeAccessIssue]
         wrapper.get_stats = _stats  # pyright: ignore[reportAttributeAccessIssue]
