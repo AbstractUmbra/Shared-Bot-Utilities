@@ -24,12 +24,12 @@ T = TypeVar("T")
 
 def ratio(a: str, b: str) -> int:
     m = SequenceMatcher(None, a, b)
-    return int(round(100 * m.ratio()))
+    return round(100 * m.ratio())
 
 
 def quick_ratio(a: str, b: str) -> int:
     m = SequenceMatcher(None, a, b)
-    return int(round(100 * m.quick_ratio()))
+    return round(100 * m.quick_ratio())
 
 
 def partial_ratio(a: str, b: str) -> int:
@@ -49,7 +49,7 @@ def partial_ratio(a: str, b: str) -> int:
             return 100
         scores.append(r)
 
-    return int(round(100 * max(scores)))
+    return round(100 * max(scores))
 
 
 _word_regex = re.compile(r"\W", re.IGNORECASE)
