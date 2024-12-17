@@ -27,3 +27,4 @@ class EventRecord(TypedDict):
     jumbo_cactpot_role_id: int | None
     ocean_fishing_role_id: int | None
     gate_role_id: int | None
+    open_tournament_role_id: int | None
