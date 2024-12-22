@@ -36,7 +36,7 @@ def restricted_author(*ids: int) -> Check[Context]:
     return commands.check(predicate)
 
 
-def restricted_guild(*ids: int) -> Check[GuildContext]:
+def restricted_guilds(*ids: int) -> Check[GuildContext]:
     def predicate(ctx: Context) -> bool:
         return bool(ctx.guild) and ctx.guild.id in ids
 
