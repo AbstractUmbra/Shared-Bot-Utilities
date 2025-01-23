@@ -12,7 +12,7 @@ import logging
 from contextlib import suppress
 from functools import partial
 from textwrap import shorten
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
+from typing import TYPE_CHECKING, Any, TypeVar, overload
 
 import discord
 from discord.ext import menus
@@ -282,7 +282,7 @@ class RoboPages(BaseView):
         self.stop()
 
 
-class FieldPageSource(menus.ListPageSource, Generic[RoboPagesT]):
+class FieldPageSource[RoboPagesT: "RoboPages"](menus.ListPageSource):
     """A page source that requires (field_name, field_value) tuple items."""
 
     def __init__(
@@ -314,7 +314,7 @@ class FieldPageSource(menus.ListPageSource, Generic[RoboPagesT]):
         return self.embed
 
 
-class TextPageSource(menus.ListPageSource, Generic[RoboPagesT]):
+class TextPageSource[RoboPagesT: "RoboPages"](menus.ListPageSource):
     def __init__(self, text: str, *, prefix: str = "```", suffix: str = "```", max_size: int = 2000) -> None:
         pages = CommandPaginator(prefix=prefix, suffix=suffix, max_size=max_size - 200)
         for line in text.split("\n"):
@@ -329,7 +329,7 @@ class TextPageSource(menus.ListPageSource, Generic[RoboPagesT]):
         return content
 
 
-class SimplePageSource(menus.ListPageSource, Generic[SimplePagesT]):
+class SimplePageSource[SimplePagesT: "SimplePages"](menus.ListPageSource):
     async def format_page(self, menu: SimplePagesT, entries: Sequence[Any]) -> discord.Embed:
         pages = []
         for index, entry in enumerate(entries, start=menu.current_page * self.per_page):
@@ -355,7 +355,7 @@ class SimplePages(RoboPages):
         self.embed = discord.Embed(colour=discord.Colour.blurple())
 
 
-class SimpleListSource(menus.ListPageSource, Generic[T]):
+class SimpleListSource[T](menus.ListPageSource):
     def __init__(self, data: list[T], per_page: int = 1) -> None:
         self.data = data
         super().__init__(data, per_page=per_page)

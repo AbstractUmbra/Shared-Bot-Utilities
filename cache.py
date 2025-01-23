@@ -12,11 +12,11 @@ import asyncio
 import enum
 import operator
 import time
+from collections import UserDict
 from functools import wraps
 from typing import (
     TYPE_CHECKING,
     Any,
-    Generic,
     Protocol,
     TypeVar,
 )
@@ -44,7 +44,7 @@ class CacheProtocol(Protocol[R]):
     def get_stats(self) -> tuple[int, int]: ...
 
 
-class ExpiringCache(dict, Generic[R]):
+class ExpiringCache[R](UserDict):
     def __init__(self, seconds: float) -> None:
         self.__ttl: float = seconds
         super().__init__()
@@ -66,10 +66,10 @@ class ExpiringCache(dict, Generic[R]):
         return v
 
     def get(self, key: str, default: R | None = None) -> R | None:
-        v = super().get(key, default)
+        v: R | None = super().get(key, default)
         if v is default:
             return default
-        return v[0]
+        return v[0]  # pyright: ignore[reportIndexIssue,reportOptionalSubscript]
 
     def __setitem__(self, key: str, value: R) -> None:
         super().__setitem__(key, (value, time.monotonic()))

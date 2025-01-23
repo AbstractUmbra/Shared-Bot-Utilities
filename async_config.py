@@ -9,7 +9,7 @@ This file was sourced from [RoboDanny](https://github.com/Rapptz/RoboDanny).
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
+from typing import TYPE_CHECKING, Any, TypeVar, overload
 
 from .formats import from_json, to_json
 
@@ -24,7 +24,7 @@ else:
 _defT = TypeVar("_defT")
 
 
-class Config(Generic[_T]):
+class Config[_T]:
     """The "database" object. Internally based on ``json``."""
 
     def __init__(

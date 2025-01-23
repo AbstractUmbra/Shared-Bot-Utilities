@@ -139,7 +139,7 @@ def update_wrapper_globals(
     )
 
 
-def command_wraps(
+def command_wraps[**P, T](
     wrapped: Callable[Concatenate[P], T],
     assigned: Sequence[str] = functools.WRAPPER_ASSIGNMENTS,
     updated: Sequence[str] = functools.WRAPPER_UPDATES,

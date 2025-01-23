@@ -3,7 +3,6 @@ import logging
 from collections.abc import Callable
 from typing import (
     Any,
-    Generic,
     Literal,
     NamedTuple,
     TypeVar,
@@ -82,7 +81,7 @@ class _BaseWebserver:
             await self._webserver.stop()
 
 
-class BaseCog(commands.Cog, Generic[BotT]):
+class BaseCog[BotT: "commands.Bot"](commands.Cog):
     def __init__(self, bot: BotT, /) -> None:
         self.bot: BotT = bot
 

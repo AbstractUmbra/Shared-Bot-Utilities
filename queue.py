@@ -2,13 +2,13 @@ from __future__ import annotations  # noqa: A005 # accessed via namespace only
 
 import asyncio
 from collections import OrderedDict, deque
-from typing import Generic, TypeVar
+from typing import TypeVar
 
 K = TypeVar("K")
 V = TypeVar("V")
 
 
-class CancellableQueue(Generic[K, V]):
+class CancellableQueue[K, V]:
     """A queue that lets you cancel the items pending for work by a provided unique ID."""
 
     def __init__(self) -> None:

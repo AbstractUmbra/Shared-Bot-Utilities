@@ -207,7 +207,7 @@ class Scheduler:
 TASK_RETURN = TypeVar("TASK_RETURN")
 
 
-def create_task(
+def create_task[TASK_RETURN](
     coro: Coroutine[Any, Any, TASK_RETURN],
     *,
     suppressed_exceptions: tuple[type[Exception], ...] = (),
@@ -240,7 +240,7 @@ def create_task(
     return task  # pyright: ignore[reportReturnType] # weird case
 
 
-async def _coro_wrapper(coro: Coroutine[Any, Any, TASK_RETURN]) -> None:
+async def _coro_wrapper[TASK_RETURN](coro: Coroutine[Any, Any, TASK_RETURN]) -> None:
     """Wraps `coro` in a try/except block that will handle 90001 Forbidden errors."""
     try:
         await coro
