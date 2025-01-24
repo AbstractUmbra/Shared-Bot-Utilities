@@ -1,1 +1,1 @@
-from . import auth as auth, kaiyoko as kaiyoko
+from . import auth as auth, fashion_report as fashion_report
