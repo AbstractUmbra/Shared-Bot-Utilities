@@ -18,13 +18,13 @@ if TYPE_CHECKING:
 
     from typing_extensions import TypeVar  # noqa: TC004
 
-    _T = TypeVar("_T", default=Any)
+    T = TypeVar("T", default=Any)
 else:
-    _T = TypeVar("_T")
+    T = TypeVar("T")
 _defT = TypeVar("_defT")
 
 
-class Config[_T]:
+class Config[T]:
     """The "database" object. Internally based on ``json``."""
 
     def __init__(
@@ -37,7 +37,7 @@ class Config[_T]:
         self.path = path
         self.loop = asyncio.get_event_loop()
         self.lock = asyncio.Lock()
-        self._db: dict[str, _T] = {}
+        self._db: dict[str, T] = {}
 
         if load_later:
             self.loop.create_task(self.load())
@@ -68,16 +68,16 @@ class Config[_T]:
             await self.loop.run_in_executor(None, self._dump)
 
     @overload
-    def get(self, key: Any) -> _T | None: ...
+    def get(self, key: Any) -> T | None: ...
 
     @overload
-    def get(self, key: Any, default: _defT) -> _T | _defT: ...
+    def get(self, key: Any, default: _defT) -> T | _defT: ...
 
-    def get(self, key: Any, default: _defT | None = None) -> _T | _defT | None:
+    def get(self, key: Any, default: _defT | None = None) -> T | _defT | None:
         """Retrieves a config entry."""
         return self._db.get(str(key), default)
 
-    async def put(self, key: Any, value: _T) -> None:
+    async def put(self, key: Any, value: T) -> None:
         """Edits a config entry."""
         self._db[str(key)] = value
         await self.save()
@@ -95,11 +95,11 @@ class Config[_T]:
     def __contains__(self, item: Any) -> bool:
         return str(item) in self._db
 
-    def __getitem__(self, item: Any) -> _T:
+    def __getitem__(self, item: Any) -> T:
         return self._db[str(item)]
 
     def __len__(self) -> int:
         return len(self._db)
 
-    def all(self) -> dict[str, _T]:
+    def all(self) -> dict[str, T]:
         return self._db
