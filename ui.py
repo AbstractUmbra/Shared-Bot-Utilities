@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from extensions.stats import Stats
     from utilities.context import Interaction
 
-__all__ = ("BaseModal", "BaseView", "ConfirmationView")
+__all__ = ("BaseModal", "BaseView", "ConfirmationView", "SelfDeleteView")
 
 
 class BaseModal(discord.ui.Modal):
@@ -116,6 +116,33 @@ class BaseView(discord.ui.View):
     async def on_timeout(self) -> None:
         self._disable_all_buttons()
         await self.message.edit(view=self)
+
+
+class SelfDeleteView(BaseView):
+    def __init__(self, *, timeout: float = 10.0, author_id: int) -> None:
+        super().__init__(timeout=timeout)
+        self.author_id = author_id
+
+    def _can_remove(self, interaction: Interaction) -> bool:
+        if interaction.user.id == self.author_id:
+            return True
+
+        return bool(
+            interaction.guild
+            and interaction.channel
+            and isinstance(interaction.channel, discord.abc.GuildChannel)
+            and isinstance(interaction.user, discord.Member)
+            and interaction.channel.permissions_for(interaction.user).manage_messages,
+        )
+
+    @discord.ui.button(style=discord.ButtonStyle.danger, emoji="\U0001f5d1\U0000fe0f")
+    async def delete_callback(self, interaction: Interaction, item: discord.ui.Item[Self]) -> None:
+        await interaction.response.defer()
+
+        if not self._can_remove(interaction):
+            return await interaction.followup.send("Sorry, you can't delete this.")
+
+        return await self.message.delete()
 
 
 class ConfirmationView(BaseView):
