@@ -708,7 +708,8 @@ class _LinePaginator(CommandPaginator):
             LOGGER.debug("There's less than two pages, so we won't paginate - sending single page on its own")
 
             if isinstance(ctx, discord.Interaction):
-                return await ctx.response.send_message(embed=embed)
+                await ctx.response.send_message(embed=embed)
+                return None
             return await ctx.send(embeds=[embed], reference=reference)
 
         if footer_text:
