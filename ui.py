@@ -137,10 +137,10 @@ class SelfDeleteView(BaseView):
 
     @discord.ui.button(style=discord.ButtonStyle.danger, emoji="\U0001f5d1\U0000fe0f")
     async def delete_callback(self, interaction: Interaction, item: discord.ui.Item[Self]) -> None:
-        await interaction.response.defer()
+        await interaction.response.defer(ephemeral=True)
 
         if not self._can_remove(interaction):
-            return await interaction.followup.send("Sorry, you can't delete this.")
+            return await interaction.followup.send("Sorry, you can't delete this.", ephemeral=True)
 
         return await self.message.delete()
 
