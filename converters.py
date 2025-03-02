@@ -11,6 +11,7 @@ from __future__ import annotations
 import collections
 import datetime
 import logging
+import operator
 import re
 import zoneinfo
 from typing import TYPE_CHECKING, Any, Literal, TypedDict
@@ -19,6 +20,8 @@ import discord
 import yarl
 from discord import Member, User, Webhook, app_commands
 from discord.ext import commands
+
+from utilities.shared.timezones import TimeZone
 
 from .time import hf_time
 
@@ -305,6 +308,35 @@ class WhenAndWhatConverter(commands.Converter[tuple[datetime.datetime, str]]):
 
 class BadDatetimeTransform(app_commands.AppCommandError):
     pass
+
+
+class TimezoneTransformer(app_commands.Transformer):
+    @property
+    def type(self) -> discord.AppCommandOptionType:
+        return discord.AppCommandOptionType.string
+
+    async def autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:
+        tzs = interaction.client.tz_handler.find_timezones(current)
+        return [tz.to_choice() for tz in tzs][:25]
+
+    async def transform(self, interaction: Interaction, value: str) -> TimeZone:
+        if value in interaction.client.tz_handler._timezone_aliases:
+            return TimeZone(key=interaction.client.tz_handler._timezone_aliases[value], label=value)
+
+        if value in interaction.client.tz_handler.valid_timezones:
+            return TimeZone(key=value, label=value)
+
+        tzs = interaction.client.tz_handler.find_timezones(value)
+
+        from utilities.context import Context  # noqa: PLC0415 # cheat
+
+        ctx = await Context.from_interaction(interaction)
+
+        try:
+            return await ctx.disambiguate(tzs, operator.itemgetter(0), ephemeral=True)
+        except ValueError:
+            msg = f"Could not find timezone for {value}."
+            raise app_commands.AppCommandError(msg) from None
 
 
 class DatetimeTransformer(app_commands.Transformer):
