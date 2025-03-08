@@ -119,8 +119,13 @@ class BaseView(discord.ui.View):
 
 
 class SelfDeleteView(BaseView):
-    def __init__(self, *, timeout: float = 10.0, author_id: int) -> None:
+    def __init__(self, *, timeout: float = 16.0, author_id: int) -> None:
         super().__init__(timeout=timeout)
+        self.add_item(
+            discord.ui.Button(
+                style=discord.ButtonStyle.grey, label="Author and Moderators can delete this message!", disabled=True
+            )
+        )
         self.author_id = author_id
 
     def _can_remove(self, interaction: Interaction) -> bool:
@@ -134,6 +139,9 @@ class SelfDeleteView(BaseView):
             and isinstance(interaction.user, discord.Member)
             and interaction.channel.permissions_for(interaction.user).manage_messages,
         )
+
+    async def on_timeout(self) -> None:
+        await self.message.edit(view=None)
 
     @discord.ui.button(style=discord.ButtonStyle.danger, emoji="\U0001f5d1\U0000fe0f")
     async def delete_callback(self, interaction: Interaction, item: discord.ui.Item[Self]) -> None:
