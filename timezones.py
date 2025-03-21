@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import operator
+import zoneinfo
 from typing import TYPE_CHECKING, NamedTuple, Self
 
 import aiohttp
@@ -48,6 +49,9 @@ class TimeZone(NamedTuple):
 
     def to_choice(self) -> app_commands.Choice[str]:
         return app_commands.Choice(name=self.label, value=self.key)
+
+    def to_zone(self) -> zoneinfo.ZoneInfo:
+        return zoneinfo.ZoneInfo(self.key)
 
 
 class TimezoneHandler:
