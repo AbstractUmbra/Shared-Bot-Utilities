@@ -84,7 +84,7 @@ class TweetDetailsResponse(TypedDict):
     lang: str
     replying_to: str | None
     replying_to_status: str | None
-    media: MediaResponse
+    media: NotRequired[MediaResponse]
     source: str
     twitter_card: str
     color: str | None
