@@ -82,8 +82,6 @@ class Config[T]:
         self._db[str(key)] = value
         await self.save()
 
-    __setitem__ = put
-
     async def remove(self, key: Any) -> None:
         """Removes a config entry."""
         try:
