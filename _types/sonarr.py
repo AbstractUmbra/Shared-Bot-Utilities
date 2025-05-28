@@ -71,6 +71,24 @@ class _SonarrSeriesRatings(TypedDict):
     value: float
 
 
+class SonarrEpisodePayload(TypedDict):
+    seriesId: int
+    tvdbId: int
+    episodeFileId: int
+    seasonNumber: int
+    episodeNumber: int
+    title: str
+    airDate: str
+    airDateUtc: str
+    lastSearchTime: str
+    runtime: int
+    hasFile: bool
+    monitored: bool
+    absoluteEpisodeNumber: int
+    unverifiedSceneNumbering: int
+    id: int
+
+
 class SonarrSeriesPayload(TypedDict):
     title: str
     sortTitle: str
@@ -122,4 +140,36 @@ class SonarrCalendarPayload(TypedDict):
     unverifiedSceneNumbering: bool
     series: SonarrSeriesPayload
     lastSearchTime: str
+    id: int
+
+
+class _SonarrCustomFormatsPayload(TypedDict):
+    id: int
+    name: str
+
+
+class SonarrQueuePayload(TypedDict):
+    seriesId: int
+    episodeId: int
+    seasonNumber: int
+    episode: SonarrEpisodePayload
+    languages: list[_SonarrEpisodeFileLanguagePayload]
+    quality: list[_SonarrEpisodeFileQualityPayload]
+    customFormats: list[_SonarrCustomFormatsPayload]
+    customFormatScore: int
+    size: int
+    title: str
+    added: str
+    status: str
+    trackedDownloadStatus: str
+    trackedDownloadState: str
+    statusMessages: list[str]
+    errorMessage: str
+    downloadId: str
+    protocol: str
+    downloadClient: str
+    downloadClientHasPostImportCategory: bool
+    indexer: str
+    episodeHasFile: bool
+    sizeleft: int
     id: int
