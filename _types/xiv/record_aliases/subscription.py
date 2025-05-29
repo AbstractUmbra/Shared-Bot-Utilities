@@ -29,3 +29,4 @@ class EventRecord(TypedDict):
     gate_role_id: int | None
     tt_open_tournament_role_id: int | None
     tt_tournament_role_id: int | None
+    island_sanctuary_role_id: int | None
