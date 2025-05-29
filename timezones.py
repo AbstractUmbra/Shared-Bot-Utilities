@@ -14,6 +14,7 @@ from . import fuzzy
 
 if TYPE_CHECKING:
     from extensions.reminders import Reminder  # pyright: ignore[reportMissingImports] # might not exist
+
     from utilities.context import Context
 
 __all__ = ("CLDRDataEntry", "TimezoneHandler")
@@ -124,7 +125,7 @@ class TimezoneHandler:
                 return
 
             parser = etree.XMLParser(ns_clean=True, recover=True, encoding="utf-8")
-            tree = etree.fromstring(await resp.read(), parser=parser)  # noqa: S320 # trusted source.
+            tree = etree.fromstring(await resp.read(), parser=parser)  # trusted source.
 
             # Build a temporary dictionary to resolve "preferred" mappings
             entries: dict[str, CLDRDataEntry] = {
