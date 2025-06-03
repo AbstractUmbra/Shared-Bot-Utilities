@@ -38,4 +38,5 @@ class PyrightResponse(TypedDict):
     python_version: str
     node_version: str
     pyright_version: str
+    executed_python_version: str
     result: PyrightOutput
