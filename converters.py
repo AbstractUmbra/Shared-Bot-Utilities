@@ -243,7 +243,7 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
         if len(parsed_times) == 0:
             raise commands.BadArgument("Could not parse time.")
         if len(parsed_times) > 1:
-            ...  # TODO: Raise on too many?
+            ...  # TODO: Raise on too many?  # noqa: TD002, TD003
 
         return parsed_times[0][0]
 
@@ -288,7 +288,7 @@ class WhenAndWhatConverter(commands.Converter[tuple[datetime.datetime, str]]):
         if len(parsed_times) == 0:
             raise commands.BadArgument("Could not parse time.")
         if len(parsed_times) > 1:
-            ...  # TODO: Raise on too many?
+            ...  # TODO: Raise on too many?  # noqa: TD002, TD003
 
         when, begin, end = parsed_times[0]
 
@@ -315,13 +315,13 @@ class TimezoneTransformer(app_commands.Transformer):
     def type(self) -> discord.AppCommandOptionType:
         return discord.AppCommandOptionType.string
 
-    async def autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:
+    async def autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:  # noqa: PLR6301 # override
         tzs = interaction.client.tz_handler.find_timezones(current)
         return [tz.to_choice() for tz in tzs][:25]
 
-    async def transform(self, interaction: Interaction, value: str) -> TimeZone:
-        if value in interaction.client.tz_handler._timezone_aliases:
-            return TimeZone(key=interaction.client.tz_handler._timezone_aliases[value], label=value)
+    async def transform(self, interaction: Interaction, value: str) -> TimeZone:  # noqa: PLR6301 # override
+        if value in interaction.client.tz_handler.timezone_aliases:
+            return TimeZone(key=interaction.client.tz_handler.timezone_aliases[value], label=value)
 
         if value in interaction.client.tz_handler.valid_timezones:
             return TimeZone(key=value, label=value)
@@ -422,7 +422,7 @@ class DatetimeTransformer(app_commands.Transformer):
         if len(parsed_times) == 0:
             raise BadDatetimeTransform("Could not parse time.")
         if len(parsed_times) > 1:
-            ...  # TODO: Raise on too many?
+            ...  # TODO: Raise on too many?  # noqa: TD002, TD003
 
         return parsed_times[0][0]
 
@@ -493,7 +493,7 @@ class WhenAndWhatTransformer(DatetimeTransformer):
         if len(parsed_times) == 0:
             raise BadDatetimeTransform("Could not parse time.")
         if len(parsed_times) > 1:
-            ...  # TODO: Raise on too many?
+            ...  # TODO: Raise on too many?  # noqa: TD002, TD003
 
         when, begin, end = parsed_times[0]
 
@@ -531,7 +531,7 @@ class Snowflake:
 
 
 class MystbinPasteConverter(commands.Converter[str]):
-    async def convert(self, ctx: GuildContext, argument: str) -> str:
+    async def convert(self, _: GuildContext, argument: str) -> str:
         matches = MYSTBIN_REGEX.search(argument)
         if not matches:
             raise commands.ConversionError(self, ValueError("No Mystbin IDs found in this text."))
@@ -540,7 +540,7 @@ class MystbinPasteConverter(commands.Converter[str]):
 
 
 class WebhookTransformer(app_commands.Transformer):
-    async def transform(self, interaction: Interaction, value: str) -> Webhook:
+    async def transform(self, interaction: Interaction, value: str) -> Webhook:  # noqa: PLR6301 # override
         try:
             wh = Webhook.from_url(value, client=interaction.client, session=interaction.client.session)
         except ValueError as err:

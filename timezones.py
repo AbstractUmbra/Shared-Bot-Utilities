@@ -34,8 +34,8 @@ class TimeZone(NamedTuple):
     @classmethod
     async def convert(cls, ctx: Context[Reminder], argument: str) -> TimeZone:
         # Prioritise aliases because they handle short codes slightly better
-        if argument in ctx.bot.tz_handler._timezone_aliases:
-            return cls(key=ctx.bot.tz_handler._timezone_aliases[argument], label=argument)
+        if argument in ctx.bot.tz_handler.timezone_aliases:
+            return cls(key=ctx.bot.tz_handler.timezone_aliases[argument], label=argument)
 
         if argument in ctx.bot.tz_handler.valid_timezones:
             return cls(key=argument, label=argument)
@@ -92,7 +92,7 @@ class TimezoneHandler:
     def __init__(self) -> None:
         self.valid_timezones: set[str] = set(get_zonefile_instance().zones)
         # User-friendly timezone names, some manual and most from the CLDR database.
-        self._timezone_aliases: dict[str, str] = {
+        self.timezone_aliases: dict[str, str] = {
             "Eastern Time": "America/New_York",
             "Central Time": "America/Chicago",
             "Mountain Time": "America/Denver",
@@ -150,9 +150,9 @@ class TimezoneHandler:
                 if entry.preferred is not None:
                     preferred = entries.get(entry.preferred)
                     if preferred is not None:
-                        self._timezone_aliases[entry.description] = preferred.aliases[0]
+                        self.timezone_aliases[entry.description] = preferred.aliases[0]
                 else:
-                    self._timezone_aliases[entry.description] = entry.aliases[0]
+                    self.timezone_aliases[entry.description] = entry.aliases[0]
 
             for key in self.DEFAULT_POPULAR_TIMEZONE_IDS:
                 entry = entries.get(key)
@@ -168,5 +168,5 @@ class TimezoneHandler:
         if "/" in query:
             return [TimeZone(key=a, label=a) for a in fuzzy.finder(query, self.valid_timezones)]
 
-        keys = fuzzy.finder(query, self._timezone_aliases.keys())
-        return [TimeZone(label=k, key=self._timezone_aliases[k]) for k in keys]
+        keys = fuzzy.finder(query, self.timezone_aliases.keys())
+        return [TimeZone(label=k, key=self.timezone_aliases[k]) for k in keys]

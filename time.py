@@ -214,7 +214,7 @@ class UserFriendlyTime(commands.Converter):
                     'Invalid time provided, try e.g. "tomorrow" or "3 days".',
                 )
 
-            if begin not in (0, 1) and end != len(argument):
+            if begin not in {0, 1} and end != len(argument):
                 raise commands.BadArgument(
                     "Time is either in an inappropriate location, which "
                     "must be either at the end or beginning of your input, "

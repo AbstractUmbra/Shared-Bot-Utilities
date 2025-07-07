@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     T = TypeVar("T", default=Any)
 else:
     T = TypeVar("T")
-_defT = TypeVar("_defT")
+_defT = TypeVar("_defT")  # noqa: N816 # how typeshed does it
 
 
 class Config[T]:

@@ -59,14 +59,14 @@ class BaseView(discord.ui.View):
         self,
         interaction: Interaction,
         error: Exception,
-        item: discord.ui.Item[Self],
+        _: discord.ui.Item[Self],
         /,
     ) -> None:
         view_name = self.__class__.__name__
-        interaction.client.log_handler.log.exception(
-            "Exception occurred in View %r:\n%s",
+        interaction.client.log_handler.log.error(
+            "Exception occurred in View %r:\n",
             view_name,
-            error,
+            exc_info=error,
         )
 
         embed = discord.Embed(title=f"{view_name} View Error", colour=0xA32952)
@@ -144,7 +144,7 @@ class SelfDeleteView(BaseView):
         await self.message.edit(view=None)
 
     @discord.ui.button(style=discord.ButtonStyle.danger, emoji="\U0001f5d1\U0000fe0f")
-    async def delete_callback(self, interaction: Interaction, item: discord.ui.Item[Self]) -> None:
+    async def delete_callback(self, interaction: Interaction, _: discord.ui.Item[Self]) -> None:
         await interaction.response.defer(ephemeral=True)
 
         if not self._can_remove(interaction):
@@ -184,7 +184,7 @@ class ConfirmationView(BaseView):
     async def confirm(
         self,
         interaction: Interaction,
-        button: discord.ui.Button,
+        _: discord.ui.Button,
     ) -> None:
         self.value = True
         await interaction.response.defer()
@@ -196,7 +196,7 @@ class ConfirmationView(BaseView):
         self.stop()
 
     @discord.ui.button(label="Cancel", style=discord.ButtonStyle.red)
-    async def cancel(self, interaction: Interaction, button: discord.ui.Button) -> None:
+    async def cancel(self, interaction: Interaction, _: discord.ui.Button) -> None:
         self.value = False
         await interaction.response.defer()
         if self.delete_after and self.message:

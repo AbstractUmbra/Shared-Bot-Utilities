@@ -32,7 +32,7 @@ def group(iterable: Sequence[str], page_len: int = 50) -> list[str]:
     return pages
 
 
-class plural:
+class plural:  # noqa: N801 # shortcut
     def __init__(self, value: SupportsAbs[int]) -> None:
         self.value = value
 
@@ -45,7 +45,7 @@ class plural:
         return f"{v} {singular}"
 
 
-class ts:
+class ts:  # noqa: N801 # shortcut
     def __init__(self, value: datetime.datetime) -> None:
         self.value: datetime.datetime = value
 
@@ -83,8 +83,7 @@ class TabularData:
         self._rows.append(rows)
         for index, element in enumerate(rows):
             width = len(element) + 2
-            if width > self._widths[index]:
-                self._widths[index] = width
+            self._widths[index] = max(self._widths[index], width)
 
     def add_rows(self, rows: Iterable[Iterable[Any]]) -> None:
         for row in rows:
@@ -169,7 +168,7 @@ def clean_single_backtick(line: str) -> str:
     if line[:2] == "``":
         line = "\u200b" + line
     if line[-1] == "`":
-        line = line + "\u200b"
+        line += "\u200b"
     return clean_emojis(line)
 
 
@@ -182,7 +181,7 @@ def clean_double_backtick(line: str) -> str:
     if line[0] == "`":
         line = "\u200b" + line
     if line[-1] == "`":
-        line = line + "\u200b"
+        line += "\u200b"
 
     return clean_emojis(line)
 
