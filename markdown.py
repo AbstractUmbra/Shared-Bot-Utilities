@@ -33,7 +33,7 @@ class AfterCallMeta(type):
                             self._skip = False
                             return result
 
-                        self._after_method()
+                        self._after_method(skip=True)
                         return result
 
                     return wrapper
@@ -50,7 +50,8 @@ class MarkdownBuilder(metaclass=AfterCallMeta):
     def __str__(self) -> str:
         return self.text
 
-    def _after_method(self) -> None:
+    def _after_method(self, *, skip: bool = True) -> None:
+        self._skip = skip
         self._inner += "\n"
 
     @property
