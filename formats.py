@@ -32,7 +32,7 @@ def group(iterable: Sequence[str], page_len: int = 50) -> list[str]:
     return pages
 
 
-class plural:  # noqa: N801 # shortcut
+class plural:  # noqa: N801 # quick shortcut
     def __init__(self, value: SupportsAbs[int]) -> None:
         self.value = value
 
@@ -45,7 +45,7 @@ class plural:  # noqa: N801 # shortcut
         return f"{v} {singular}"
 
 
-class ts:  # noqa: N801 # shortcut
+class ts:  # noqa: N801 # quick shortcut
     def __init__(self, value: datetime.datetime) -> None:
         self.value: datetime.datetime = value
 

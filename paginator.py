@@ -40,7 +40,7 @@ SimplePagesT = TypeVar("SimplePagesT", bound="SimplePages")
 
 
 class NumberedPageModal(discord.ui.Modal, title="Go to page"):
-    page = discord.ui.TextInput["Self"](label="Page", placeholder="Enter a number", min_length=1)
+    page = discord.ui.TextInput(label="Page", placeholder="Enter a number", min_length=1)
 
     def __init__(self, max_pages: int | None) -> None:
         super().__init__()
@@ -163,7 +163,7 @@ class RoboPages(BaseView):
         if self.message:
             await self.message.edit(view=None)
 
-    async def on_error(self, interaction: Interaction, _e: Exception, _i: discord.ui.Item) -> None:  # noqa: PLR6301 # override
+    async def on_error(self, interaction: Interaction, _e: Exception, _i: discord.ui.Item) -> None:  # override
         if interaction.response.is_done():
             await interaction.followup.send("An unknown error occurred, sorry", ephemeral=True)
         else:
@@ -174,7 +174,7 @@ class RoboPages(BaseView):
             await self.ctx.send("Bot does not have embed links permission in this channel.", ephemeral=True)
             return
 
-        await self.source._prepare_once()  # noqa: SLF001 # required init
+        await self.source._prepare_once()  # required init
         page = await self.source.get_page(0)
         kwargs = await self._get_kwargs_from_page(page)
         if content:
@@ -328,7 +328,7 @@ class SimpleListSource[T](menus.ListPageSource):
     @overload
     async def format_page(self, _: menus.Menu, entries: T) -> T: ...
 
-    async def format_page(self, _: menus.Menu, entries: T | list[T]) -> T | list[T]:  # noqa: PLR6301 # override
+    async def format_page(self, _: menus.Menu, entries: T | list[T]) -> T | list[T]:
         return entries
 
 

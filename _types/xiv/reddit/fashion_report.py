@@ -25,7 +25,7 @@ class ChildListingDataResponse(TypedDict):
     link_flair_css_class: str
     downs: int
     thumbnail_height: int
-    top_awarded_type: Any | None  # TODO?  # noqa: TD002, TD003, TD004
+    top_awarded_type: Any
     hide_score: bool
     name: str
     quarantine: bool
@@ -78,8 +78,8 @@ class ChildListingDataResponse(TypedDict):
     is_crosspostable: bool
     pinned: bool
     over_18: bool
-    preview: ...  # TODO?  # noqa: TD002, TD003, TD004
-    all_awardings: list[Any]  # some objects: #TODO?  # noqa: TD002, TD003, TD004
+    preview: Any
+    all_awardings: list[Any]
     awarders: list[Any]
     media_only: bool
     link_flair_template_id: str
