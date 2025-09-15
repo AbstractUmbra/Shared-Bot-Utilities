@@ -12,7 +12,6 @@ import asyncio
 import enum
 import operator
 import time
-from collections import UserDict
 from functools import wraps
 from typing import (
     TYPE_CHECKING,
@@ -44,7 +43,7 @@ class CacheProtocol(Protocol[R]):
     def get_stats(self) -> tuple[int, int]: ...
 
 
-class ExpiringCache[R](UserDict):
+class ExpiringCache[R](dict):  # noqa: FURB189 # we need dict
     def __init__(self, seconds: float) -> None:
         self.__ttl: float = seconds
         super().__init__()
@@ -52,7 +51,7 @@ class ExpiringCache[R](UserDict):
     def __verify_cache_integrity(self) -> None:
         # Have to do this in two steps...
         current_time = time.monotonic()
-        to_remove = [k for (k, (_, t)) in super().items() if current_time > (t + self.__ttl)]
+        to_remove: list[str] = [k for (k, (_, t)) in super().items() if current_time > (t + self.__ttl)]
         for k in to_remove:
             del self[k]
 
