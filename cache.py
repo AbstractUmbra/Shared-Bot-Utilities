@@ -76,7 +76,7 @@ class ExpiringCache[R](dict):  # noqa: FURB189 # we need dict
     def values(self) -> map[R]:
         return map(operator.itemgetter(0), super().values())
 
-    def items(self) -> Generator[tuple[float, R], None, None]:
+    def items(self) -> Generator[tuple[float, R]]:
         return ((x[0], x[1][0]) for x in super().items())
 
 
