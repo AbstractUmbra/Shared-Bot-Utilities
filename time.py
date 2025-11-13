@@ -335,6 +335,10 @@ def ordinal(number: int) -> str:
 def hf_time(dt: datetime.datetime, *, with_time: bool = True) -> str:
     date_modif = ordinal(dt.day)
     if with_time:
+        assert dt.tzinfo  # we only deal with aware
+        tz_friendly_name = dt.tzinfo.tzname(dt)
+        if tz_friendly_name:
+            return dt.strftime(f"%A {date_modif} of %B %Y @ %H:%M %Z ({tz_friendly_name} | %z)")
         return dt.strftime(f"%A {date_modif} of %B %Y @ %H:%M %Z (%z)")
     return dt.strftime(f"%A {date_modif} of %B %Y")
 

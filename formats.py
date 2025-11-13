@@ -17,7 +17,7 @@ from collections.abc import Iterable, Sequence
 from typing import Any, SupportsAbs
 
 import discord
-from discord.utils import escape_markdown
+from discord.utils import TimestampStyle, escape_markdown
 
 CONTROL_CHARS = re.compile(
     "[{}]".format(re.escape("".join(chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("C")))),
@@ -49,9 +49,8 @@ class ts:  # noqa: N801 # quick shortcut
     def __init__(self, value: datetime.datetime) -> None:
         self.value: datetime.datetime = value
 
-    def __format__(self, __format_spec: str) -> str:  # noqa: PYI063 # required to be a compatible override
-        spec, _, _ = __format_spec.partition("|")
-        return discord.utils.format_dt(self.value, style=spec)  # pyright: ignore[reportArgumentType] literal downcasting
+    def __format__(self, __format_spec: TimestampStyle) -> str:  # noqa: PYI063 # required to be a compatible override
+        return discord.utils.format_dt(self.value, style=__format_spec)
 
 
 def human_join(seq: Sequence[str], delim: str = ", ", final: str = "or") -> str:
