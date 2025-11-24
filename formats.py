@@ -211,7 +211,7 @@ def clean_triple_backtick(line: str) -> str:
 
 
 try:
-    import orjson  # pyright: ignore[reportMissingImports]  # may not always exist
+    import orjson
 except ImportError:
 
     def to_json(obj: Any) -> str:
@@ -225,7 +225,7 @@ else:
     def to_json(obj: Any) -> str:
         return orjson.dumps(obj, option=orjson.OPT_INDENT_2 | orjson.OPT_SORT_KEYS).decode()
 
-    def from_json(obj: str) -> Any:  # pyright: ignore[reportRedeclaration] # in a context with no orjson
+    def from_json(obj: str) -> Any:
         return orjson.loads(obj)
 
 

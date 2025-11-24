@@ -315,11 +315,13 @@ class TimezoneTransformer(app_commands.Transformer):
     def type(self) -> discord.AppCommandOptionType:
         return discord.AppCommandOptionType.string
 
-    async def autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:  # override
+    async def autocomplete(  # override  # noqa: PLR6301
+        self, interaction: Interaction, current: str
+    ) -> list[app_commands.Choice[str]]:
         tzs = interaction.client.tz_handler.find_timezones(current)
         return [tz.to_choice() for tz in tzs][:25]
 
-    async def transform(self, interaction: Interaction, value: str) -> TimeZone:  # override
+    async def transform(self, interaction: Interaction, value: str) -> TimeZone:  # override  # noqa: PLR6301
         if value in interaction.client.tz_handler.timezone_aliases:
             return TimeZone(key=interaction.client.tz_handler.timezone_aliases[value], label=value)
 
@@ -540,7 +542,7 @@ class MystbinPasteConverter(commands.Converter[str]):
 
 
 class WebhookTransformer(app_commands.Transformer):
-    async def transform(self, interaction: Interaction, value: str) -> Webhook:
+    async def transform(self, interaction: Interaction, value: str) -> Webhook:  # noqa: PLR6301
         try:
             wh = Webhook.from_url(value, client=interaction.client, session=interaction.client.session)
         except ValueError as err:

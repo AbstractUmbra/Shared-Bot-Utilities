@@ -163,7 +163,9 @@ class RoboPages(BaseView):
         if self.message:
             await self.message.edit(view=None)
 
-    async def on_error(self, interaction: Interaction, _e: Exception, _i: discord.ui.Item) -> None:  # override
+    async def on_error(  # override  # noqa: PLR6301
+        self, interaction: Interaction, _e: Exception, _i: discord.ui.Item
+    ) -> None:
         if interaction.response.is_done():
             await interaction.followup.send("An unknown error occurred, sorry", ephemeral=True)
         else:
@@ -174,7 +176,7 @@ class RoboPages(BaseView):
             await self.ctx.send("Bot does not have embed links permission in this channel.", ephemeral=True)
             return
 
-        await self.source._prepare_once()  # required init
+        await self.source._prepare_once()  # required init  # noqa: SLF001
         page = await self.source.get_page(0)
         kwargs = await self._get_kwargs_from_page(page)
         if content:
@@ -328,7 +330,7 @@ class SimpleListSource[T](menus.ListPageSource):
     @overload
     async def format_page(self, _: menus.Menu, entries: T) -> T: ...
 
-    async def format_page(self, _: menus.Menu, entries: T | list[T]) -> T | list[T]:
+    async def format_page(self, _: menus.Menu, entries: T | list[T]) -> T | list[T]:  # noqa: PLR6301
         return entries
 
 
