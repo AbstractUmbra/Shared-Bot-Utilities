@@ -384,3 +384,12 @@ def resolve_previous_weekday(
         source -= datetime.timedelta(days=1)
 
     return source
+
+
+def resolve_last_weekday(year: int, month: int) -> datetime.date:
+    last_ = datetime.date(year + int(month / 12), month % 12 + 1, 1) - datetime.timedelta(days=1)
+    wd = last_.weekday()
+    if wd in {5, 6}:  # while saturday or sunday
+        last_ -= datetime.timedelta(days=wd - 4)
+
+    return last_
