@@ -14,7 +14,6 @@ from . import fuzzy
 
 if TYPE_CHECKING:
     from extensions.reminders import Reminder  # pyright: ignore[reportMissingImports] # might not exist
-
     from utilities.context import Context
 
 __all__ = ("CLDRDataEntry", "TimezoneHandler")

@@ -30,7 +30,6 @@ class DucklingResponseValue(TypedDict):
     second: NotRequired[int]
     day: NotRequired[int]
     week: NotRequired[int]
-    hour: NotRequired[int]
 
 
 class DucklingResponse(TypedDict):
