@@ -15,13 +15,13 @@ if TYPE_CHECKING:
 __all__ = ("DucklingResponse",)
 
 
-class DucklingNormalised(TypedDict):
+class DucklingNormalized(TypedDict):
     unit: Literal["second"]
     value: int
 
 
 class DucklingResponseValue(TypedDict):
-    normalized: DucklingNormalised
+    normalized: DucklingNormalized
     type: Literal["value"]
     unit: str
     value: NotRequired[str]

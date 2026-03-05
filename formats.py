@@ -172,7 +172,7 @@ def clean_single_backtick(line: str) -> str:
 
 
 def clean_double_backtick(line: str) -> str:
-    """Clean string for isnertion in double backtick code section.
+    """Clean string for insertion in double backtick code section.
     Clean backticks so we don't accidentally escape, and escape custom emojis
     that would be discordified.
     """

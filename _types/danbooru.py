@@ -32,7 +32,7 @@ class DanbooruPayload(TypedDict):
     is_flagged: bool
     is_deleted: bool
     tag_count: int
-    updated_at: str  # datetiume
+    updated_at: str  # datetime
     is_banned: bool
     pixiv_id: str | None  # ?
     last_commented_at: str | None  # datetime?

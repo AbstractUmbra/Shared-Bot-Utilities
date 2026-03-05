@@ -71,7 +71,7 @@ class ChildListingDataResponse(TypedDict):
     likes: Any | None  # unsure
     suggested_sort: Any | None  # unsure
     banned_at_utc: str | None
-    url_overriden_by_dest: str
+    url_overridden_by_dest: str
     view_count: Any | None  # unsure
     archived: bool
     no_follow: bool
@@ -96,7 +96,7 @@ class ChildListingDataResponse(TypedDict):
     author_is_blocked: bool
     mod_reason_by: Any | None
     num_reports: Any | None
-    remmoval_reason: Any | None
+    removal_reason: Any | None
     link_flair_background_color: str
     id: str
     is_robot_indexable: bool

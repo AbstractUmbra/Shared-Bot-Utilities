@@ -27,7 +27,7 @@ class DnDClassStartingProficiencies(TypedDict):
     armor: list[str]
     weapons: list[str]
     tools: list[str]
-    skiils: DnDClassSkillsChoice
+    skills: DnDClassSkillsChoice
 
 
 class DnDClassStartingEquipmentBField(TypedDict):

@@ -33,7 +33,7 @@ class AnsiBackground(StrEnum):
     dark_blue = "40"
     orange = "41"
     marble_blue = "42"
-    turqoise = "43"
+    turquoise = "43"
     gray = "44"
     grey = "44"
     indigo = "45"
@@ -43,7 +43,7 @@ class AnsiBackground(StrEnum):
 
 
 AnsiBackgroundLiteral = Literal[
-    "dark_blue", "orange", "marble_blue", "turqoise", "gray", "grey", "indigo", "light_gray", "light_grey", "white"
+    "dark_blue", "orange", "marble_blue", "turquoise", "gray", "grey", "indigo", "light_gray", "light_grey", "white"
 ]
 
 __all__ = ("AnsiBackground", "AnsiColor", "AnsiColour", "AnsiFormat", "AnsiString")
