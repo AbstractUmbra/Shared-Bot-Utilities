@@ -285,7 +285,7 @@ def extract_matches[T](
 
 
 @overload
-def finder(
+def finder[T](
     text: str,
     collection: Iterable[T],
     *,
@@ -295,7 +295,7 @@ def finder(
 
 
 @overload
-def finder(
+def finder[T](
     text: str,
     collection: Iterable[T],
     *,
@@ -305,7 +305,7 @@ def finder(
 
 
 @overload
-def finder(
+def finder[T](
     text: str,
     collection: Iterable[T],
     *,
@@ -314,7 +314,7 @@ def finder(
 ) -> list[T]: ...
 
 
-def finder(
+def finder[T](
     text: str,
     collection: Iterable[T],
     *,

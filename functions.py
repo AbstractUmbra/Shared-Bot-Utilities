@@ -94,7 +94,7 @@ def get_bound_args(func: Callable, args: tuple, kwargs: dict[str, Any]) -> Bound
     return bound_args.arguments
 
 
-def update_wrapper_globals(
+def update_wrapper_globals[**P, T](
     wrapper: Callable[Concatenate[P], T],
     wrapped: Callable[Concatenate[P], T],
     *,
