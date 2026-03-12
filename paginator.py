@@ -163,7 +163,7 @@ class RoboPages(BaseView):
         if self.message:
             await self.message.edit(view=None)
 
-    async def on_error(  # override  # noqa: PLR6301 # required for dpy callback
+    async def on_error(  # override
         self, interaction: Interaction, _e: Exception, _i: discord.ui.Item
     ) -> None:
         if interaction.response.is_done():
@@ -176,7 +176,7 @@ class RoboPages(BaseView):
             await self.ctx.send("Bot does not have embed links permission in this channel.", ephemeral=True)
             return
 
-        await self.source._prepare_once()  # noqa: SLF001 # I know what I'm doing dad
+        await self.source._prepare_once()
         page = await self.source.get_page(0)
         kwargs = await self._get_kwargs_from_page(page)
         if content:
