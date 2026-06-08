@@ -133,7 +133,7 @@ class MosaicMediaResponse(TypedDict):
 
 class BroadcastMediaResponse(TypedDict):
     url: str
-    ## TODO
+    # TODO: complete types  # noqa: FIX002, TD002, TD003
 
 
 class MediaResponse(TypedDict):
@@ -199,7 +199,7 @@ class DeadTweetReponse(TypedDict):
     provider: Literal["twitter"]
     reason: Literal["deleted", "unavailable", "suspended", "private", "blocked"]
     message: str
-    id: NotRequred[str]
+    id: NotRequired[str]
     url: NotRequired[str]
     author: NotRequired[AuthorResponse]
     at_uri: NotRequired[str]
@@ -209,5 +209,6 @@ class DeadTweetReponse(TypedDict):
 class FXTwitterResponse(TypedDict):
     code: int
     status: TweetDetailsResponse | DeadTweetReponse | None
-    thread: list[ThreadDetailsResponse | DeadTweetReponse] | None
-    author: AuthorDetailsResponse
+    # TODO: complete types  # noqa: FIX002, TD002, TD003
+    # thread: list[ThreadDetailsResponse | DeadTweetReponse] | None  # noqa: ERA001
+    # author: AuthorDetailsResponse  # noqa: ERA001

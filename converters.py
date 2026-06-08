@@ -241,8 +241,6 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
 
         if len(parsed_times) == 0:
             raise commands.BadArgument("Could not parse time.")
-        if len(parsed_times) > 1:
-            ...
 
         return parsed_times[0][0]
 
@@ -286,8 +284,6 @@ class WhenAndWhatConverter(commands.Converter[tuple[datetime.datetime, str]]):
 
         if len(parsed_times) == 0:
             raise commands.BadArgument("Could not parse time.")
-        if len(parsed_times) > 1:
-            ...
 
         when, begin, end = parsed_times[0]
 
@@ -422,8 +418,6 @@ class DatetimeTransformer(app_commands.Transformer):
 
         if len(parsed_times) == 0:
             raise BadDatetimeTransform("Could not parse time.")
-        if len(parsed_times) > 1:
-            ...
 
         return parsed_times[0][0]
 
@@ -493,8 +487,6 @@ class WhenAndWhatTransformer(DatetimeTransformer):
 
         if len(parsed_times) == 0:
             raise BadDatetimeTransform("Could not parse time.")
-        if len(parsed_times) > 1:
-            ...
 
         when, begin, end = parsed_times[0]
 
