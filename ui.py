@@ -91,7 +91,11 @@ class BaseView(discord.ui.View):
         clean = "".join(trace)
         if len(clean) >= 2000:
             password = secrets.token_urlsafe(16)
-            paste = await interaction.client.create_paste(content=clean, password=password)
+            paste, __ = await interaction.client.create_paste(
+                title="Error from View",
+                contents=("Paste1", "py", clean),  # pyright: ignore[reportArgumentType]
+                password=password,
+            )
             embed.description = (
                 f"Error was too long to send in a codeblock, so I have pasted it [here]({paste})."
                 f"\nThe password is `{password}`."
