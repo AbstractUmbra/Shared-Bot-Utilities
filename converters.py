@@ -50,7 +50,7 @@ def resolve_nsfwness(
     messageable: discord.abc.Messageable | discord.CategoryChannel | discord.ForumChannel | None,
     /,
 ) -> bool:
-    from utilities.context import Context  # noqa: PLC0415 # cheat
+    from utilities.context import Context  # ruff: ignore[import-outside-top-level] # cheat
 
     if not messageable:
         # passed None
@@ -325,7 +325,7 @@ class TimezoneTransformer(app_commands.Transformer):
 
         tzs = interaction.client.tz_handler.find_timezones(value)
 
-        from utilities.context import Context  # noqa: PLC0415 # cheat
+        from utilities.context import Context  # ruff: ignore[import-outside-top-level] # cheat
 
         ctx = await Context.from_interaction(interaction)
 

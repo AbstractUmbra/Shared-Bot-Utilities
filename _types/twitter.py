@@ -133,7 +133,7 @@ class MosaicMediaResponse(TypedDict):
 
 class BroadcastMediaResponse(TypedDict):
     url: str
-    # TODO: complete types  # noqa: FIX002, TD002, TD003
+    # TODO: complete types  # ruff: ignore[line-contains-todo, missing-todo-author, missing-todo-link]
 
 
 class MediaResponse(TypedDict):
@@ -209,6 +209,6 @@ class DeadTweetReponse(TypedDict):
 class FXTwitterResponse(TypedDict):
     code: int
     status: TweetDetailsResponse | DeadTweetReponse | None
-    # TODO: complete types  # noqa: FIX002, TD002, TD003
-    # thread: list[ThreadDetailsResponse | DeadTweetReponse] | None  # noqa: ERA001
-    # author: AuthorDetailsResponse  # noqa: ERA001
+    # TODO: complete types  # ruff: ignore[line-contains-todo, missing-todo-author, missing-todo-link]
+    # thread: list[ThreadDetailsResponse | DeadTweetReponse] | None  # ruff: ignore[commented-out-code]
+    # author: AuthorDetailsResponse  # ruff: ignore[commented-out-code]

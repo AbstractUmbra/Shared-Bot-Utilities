@@ -32,7 +32,7 @@ def group(iterable: Sequence[str], page_len: int = 50) -> list[str]:
     return pages
 
 
-class plural:  # noqa: N801 # quick shortcut
+class plural:  # ruff: ignore[invalid-class-name] # quick shortcut
     def __init__(self, value: SupportsAbs[int]) -> None:
         self.value = value
 
@@ -45,11 +45,11 @@ class plural:  # noqa: N801 # quick shortcut
         return f"{v} {singular}"
 
 
-class ts:  # noqa: N801 # quick shortcut
+class ts:  # ruff: ignore[invalid-class-name] # quick shortcut
     def __init__(self, value: datetime.datetime) -> None:
         self.value: datetime.datetime = value
 
-    def __format__(self, __format_spec: TimestampStyle) -> str:  # noqa: PYI063 # required to be a compatible override
+    def __format__(self, __format_spec: TimestampStyle) -> str:  # ruff: ignore[pep484-style-positional-only-parameter] # required to be a compatible override
         return discord.utils.format_dt(self.value, style=__format_spec)
 
 
@@ -230,7 +230,7 @@ else:
 
 
 def random_pastel_colour() -> discord.Colour:
-    return discord.Colour.from_hsv(random.random(), 0.28, 0.97)  # noqa: S311 # not crypto
+    return discord.Colour.from_hsv(random.random(), 0.28, 0.97)  # ruff: ignore[suspicious-non-cryptographic-random-usage] # not crypto
 
 
 def find_nth_occurrence(string: str, substring: str, n: int) -> int | None:

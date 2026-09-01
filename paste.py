@@ -76,7 +76,7 @@ async def create_paste(
     *,
     title: str,
     contents: list[CreatePasteInput],
-    password: str | None = None,  # noqa: ARG001 # backport
+    password: str | None = None,  # ruff: ignore[unused-function-argument] # backport
     tags: list[str] | None = None,
     expiry: datetime.datetime | None = None,
     session: aiohttp.ClientSession,

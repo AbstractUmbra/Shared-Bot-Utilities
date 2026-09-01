@@ -43,7 +43,7 @@ class CacheProtocol(Protocol[R]):
     def get_stats(self) -> tuple[int, int]: ...
 
 
-class ExpiringCache[R](dict):  # noqa: FURB189 # we need dict
+class ExpiringCache[R](dict):  # ruff: ignore[subclass-builtin] # we need dict
     def __init__(self, seconds: float) -> None:
         self.__ttl: float = seconds
         super().__init__()
@@ -151,7 +151,7 @@ def cache(
                 return True
 
         def _invalidate_containing(key: str) -> None:
-            to_remove = [k for k in internal_cache.keys() if key in k]  # noqa: SIM118, LRU ain't iterable
+            to_remove = [k for k in internal_cache.keys() if key in k]  # ruff: ignore[in-dict-keys], LRU ain't iterable
             for k in to_remove:
                 try:
                     del internal_cache[k]

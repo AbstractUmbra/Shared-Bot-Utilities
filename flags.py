@@ -40,7 +40,7 @@ class BaseFlags:
             raise TypeError(msg_)
 
 
-class flag_value:  # noqa: N801
+class flag_value:  # ruff: ignore[invalid-class-name]
     def __init__(self, func: Callable[[Any], int]) -> None:
         self.flag: int = func(None)
         self.__doc__: str | None = func.__doc__
@@ -56,7 +56,7 @@ class flag_value:  # noqa: N801
             return self
         return instance._has_flag(self.flag)
 
-    def __set__(self, instance: BaseFlags, value: bool) -> None:  # noqa: FBT001
+    def __set__(self, instance: BaseFlags, value: bool) -> None:  # ruff: ignore[boolean-type-hint-positional-argument]
         instance._set_flag(self.flag, toggle=value)
 
     def __repr__(self) -> str:

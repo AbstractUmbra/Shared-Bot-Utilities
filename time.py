@@ -170,7 +170,7 @@ class UserFriendlyTime(commands.Converter):
         # events modifying the same instance of a converter
         result = self.copy()
         remaining = ""
-        try:  # noqa: PLW0717
+        try:  # ruff: ignore[too-many-statements-in-try-clause]
             calendar = HumanTime.calendar
             regex = ShortTime.compiled
             now = ctx.message.created_at
