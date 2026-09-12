@@ -8,6 +8,9 @@ if TYPE_CHECKING:
     import aiohttp
 
 API_BASE: str = "https://paste.myst.rs/api/v2"
+URL_BASE: str = "https://paste.myst.rs/{id}"
+
+__all__ = ("CreatePasteInput", "Paste")
 
 
 class CreatePasteInput(NamedTuple):
@@ -81,7 +84,7 @@ async def create_paste(
     expiry: datetime.datetime | None = None,
     session: aiohttp.ClientSession,
     api_token: str,
-) -> tuple[str, datetime.datetime | None]:
+) -> Paste:
     expiry_fmt = _clamp_time(expiry) if expiry else "never"
     tags_fmt = ",".join(tags) if tags else ""
 
@@ -109,4 +112,21 @@ async def create_paste(
 
     expires = datetime.datetime.fromtimestamp(data["deletesAt"], datetime.UTC) if data["deletesAt"] else None
 
-    return f"https://paste.myst.rs/{data['_id']}", expires
+    return Paste(data["_id"], expires)
+
+
+async def delete_paste(paste_id: str, *, session: aiohttp.ClientSession, api_token: str) -> None:
+    async with session.delete(f"{API_BASE}/paste/{paste_id}", headers={"Authorization": api_token}) as resp:
+        resp.raise_for_status()
+
+
+class Paste(NamedTuple):
+    id: str
+    expires: datetime.datetime | None
+
+    @property
+    def url(self) -> str:
+        return URL_BASE.format(id=self.id)
+
+    async def delete(self, paste_id: str, *, session: aiohttp.ClientSession, api_token: str) -> None:
+        return await delete_paste(paste_id, session=session, api_token=api_token)
