@@ -192,7 +192,7 @@ class DatetimeConverter(commands.Converter[datetime.datetime]):
         async with ctx.bot.session.post(
             duckling_url,
             data={
-                "locale": "en_US",
+                "locale": "en_GB",
                 "text": argument,
                 "dims": '["time", "duration"]',
                 "tz": str(timezone),
@@ -363,7 +363,7 @@ class DatetimeTransformer(app_commands.Transformer):
         async with interaction.client.session.post(
             duckling_url,
             data={
-                "locale": "en_US",
+                "locale": "en_GB",
                 "text": argument,
                 "dims": '["time", "duration"]',
                 "tz": str(timezone),
@@ -417,7 +417,8 @@ class DatetimeTransformer(app_commands.Transformer):
         )
 
         if len(parsed_times) == 0:
-            raise BadDatetimeTransform("Could not parse time.")
+            err = f"Could not parse {argument!r} as time."
+            raise BadDatetimeTransform(err)
 
         return parsed_times[0][0]
 
@@ -486,15 +487,18 @@ class WhenAndWhatTransformer(DatetimeTransformer):
         )
 
         if len(parsed_times) == 0:
-            raise BadDatetimeTransform("Could not parse time.")
+            err = f"Could not parse {value!r} as datetime."
+            raise BadDatetimeTransform(err)
 
         when, begin, end = parsed_times[0]
 
         if begin != 0 and end != len(value):
-            raise BadDatetimeTransform("Could not distinguish time from argument.")
+            err = f"Could not distinguish time from argument {value!r}."
+            raise BadDatetimeTransform(err)
 
         if when < now:
-            raise BadDatetimeTransform("This time is in the past.")
+            err = f"The time {value!r} is in the past."
+            raise BadDatetimeTransform(err)
 
         what = value[end + 1 :].lstrip(" ,.!:;") if begin == 0 else value[:begin].strip()
 
