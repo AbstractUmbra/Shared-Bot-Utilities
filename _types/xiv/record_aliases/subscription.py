@@ -4,9 +4,10 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
-from typing import TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
-from asyncpg import BitString
+if TYPE_CHECKING:
+    from asyncpg import BitString
 
 __all__ = ("EventRecord",)
 

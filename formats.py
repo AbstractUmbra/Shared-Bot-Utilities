@@ -7,17 +7,19 @@ This file was sourced from [RoboDanny](https://github.com/Rapptz/RoboDanny).
 """
 
 import codecs
-import datetime
 import json
 import random
 import re
 import sys
 import unicodedata
-from collections.abc import Iterable, Sequence
-from typing import Any, SupportsAbs
+from typing import TYPE_CHECKING, Any, SupportsAbs
 
 import discord
 from discord.utils import TimestampStyle, escape_markdown
+
+if TYPE_CHECKING:
+    import datetime
+    from collections.abc import Iterable, Sequence
 
 CONTROL_CHARS = re.compile(
     "[{}]".format(re.escape("".join(chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("C")))),

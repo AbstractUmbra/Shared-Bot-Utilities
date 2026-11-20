@@ -1,6 +1,9 @@
-import datetime
-import zoneinfo
+from typing import TYPE_CHECKING
 from urllib.parse import quote
+
+if TYPE_CHECKING:
+    import datetime
+    import zoneinfo
 
 __all__ = ("create_gcalendar_event",)
 

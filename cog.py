@@ -1,7 +1,7 @@
 import inspect
 import logging
-from collections.abc import Callable
 from typing import (
+    TYPE_CHECKING,
     Any,
     Literal,
     NamedTuple,
@@ -12,6 +12,9 @@ from aiohttp import web
 from aiohttp.web import Request
 from discord.ext import commands
 from discord.utils import MISSING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 __all__: tuple[str, ...] = (
     "BaseCog",
