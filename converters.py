@@ -45,6 +45,42 @@ __all__ = (
     "WhenAndWhatTransformer",
 )
 
+COLOUR_REGEX = re.compile(
+    (
+        r"(?P<RGB>(?P<R>\d{1,3})(?:,|\s)+(?P<G>\d{1,3})(?:,?\s?)+(?P<B>\d{1,3}))"
+        r"|(?P<HSV>(?P<H>\d{1,3}(?:\.\d)?)(?:,|\s)+(?P<S>\d{1,3}(?:\.\d)?)(?:,|\s)+(?P<V>\d{1,3}(?:\.\d)?))"
+        r"|(?P<Hex>(?<!\<)\#(?:[a-f0-9]{6}|[a-f0-9]{3}\b))"
+    ),
+    re.IGNORECASE,
+)
+
+
+def _hex_to_rgb(hex_: str | int) -> tuple[int, int, int]:  # pyright: ignore[reportUnusedFunction] # helpful
+    if isinstance(hex_, str):
+        hex_ = int(hex_.lstrip("#"), 16)
+
+    return (hex_ >> 16, (hex_ >> 0) & 0xFF, hex_ & 0xFF)
+
+
+def _colour_match_factory(match_: re.Match[str], /) -> discord.Colour:
+    try:
+        return discord.Colour.from_str(match_[0])
+    except ValueError:
+        pass
+
+    if match_.group("RGB"):
+        return discord.Colour.from_rgb(*map(int, map(match_.group, "RGB")))
+    if match_.group("HSV"):
+        return discord.Colour.from_hsv(*map(float, map(match_.group, "HSV")))
+    if match_.group("Hex"):
+        group = match_["Hex"]
+        if len(group) == 4:
+            group = "#" + "".join(character * 2 for character in group.removeprefix("#"))
+
+        return discord.Colour(int(group.lstrip("#"), 16))
+
+    raise RuntimeError("Unreachable")
+
 
 def resolve_nsfwness(
     messageable: discord.abc.Messageable | discord.CategoryChannel | discord.ForumChannel | None,
@@ -152,7 +188,7 @@ class RedditMediaURL:
 
             try:
                 media = submission["media"]["reddit_video"]
-            except (KeyError, TypeError):
+            except KeyError, TypeError:
                 try:
                     # maybe it's a cross post
                     crosspost = submission["crosspost_parent_list"][0]
@@ -548,6 +584,20 @@ class WebhookTransformer(app_commands.Transformer):
             raise ValueError from err
 
         return wh
+
+
+class BadColourArgument(commands.BadArgument): ...
+
+
+class ColourConverter(commands.Converter[discord.Colour]):
+    COLOUR_PROSE = ""
+
+    async def convert(self, _: Context, argument: str) -> discord.Colour:
+        match = COLOUR_REGEX.search(argument)
+        if not match:
+            raise BadColourArgument("Unable to find Colour match.")
+
+        return _colour_match_factory(match)
 
 
 MemberOrUser = Member | User
